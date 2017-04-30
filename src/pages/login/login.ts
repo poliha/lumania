@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
-
+import { Auth, User} from '@ionic/cloud-angular';
 /**
  * Generated class for the Login page.
  *
@@ -14,13 +14,34 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 })
 export class Login {
 
-	account = {};
+	account: {email: string, password: string} = {
+		'email': "",
+  	'password': ""
+  };
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
+  constructor(public navCtrl: NavController, public navParams: NavParams,
+  	public auth: Auth, public user: User) {
   }
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad Login');
+  }
+
+  doLogin(){
+
+  	let details = {'email': this.account.email, 'password': this.account.password};
+
+  	this.auth.login('basic', details).then(() => {
+
+        // success
+        console.log(this.user);
+
+    }, (err) => {
+
+   	    // problem logging in
+        console.log(err);
+
+    });
   }
 
 }

@@ -15,7 +15,7 @@ import { Auth, User, UserDetails, IDetailedError } from '@ionic/cloud-angular';
 })
 export class Signup {
 	account: {name: string, email: string, password: string} = {
-		'email': "this.account.email",
+		'email': "",
   	'password': "",
   	'name': ""
   };
