@@ -39,10 +39,10 @@ export class Signup {
   }
 
 
-  showAlert(){
+  showAlert(msg){
      this.alert = this.alertCtrl.create({
       title: 'Signup Successful',
-      message: 'Login to  access your account',
+      message: msg,
       buttons: [
         {
           text: 'Login',
@@ -71,36 +71,38 @@ export class Signup {
   	this.auth.signup(details).then(() => {
 		  // hide loading message
       this.loading.dismiss();
-      showAlert();
+      showAlert('Login to  access your account');
       
 		  console.log("user: ",this.user);
 		}, (err: IDetailedError<string[]>) => {
-		  for (let e of err.details) {
-		    this.loading.dismiss();
+		  let message = "";
+      for (let e of err.details) {
+		    
       	console.log(e);
-		  	// TO DO handle errors
-		    // if (e === 'conflict_email') {
-		    //   // alert('Email already exists.');
-		    // }
-		    // else if(error === 'required_email'){
-      //           // email missing
-      //   }
-      //   else if(error === 'required_password'){
-      //           // password missing
-      //   }
-      //   else if(error === 'conflict_email'){
-      //           // email already in use
-      //   }
-      //   else if (error === 'conflict_username'){
-      //           // username alerady in use
-      //   }
-      //   else if (error === ' invalid_email'){
-      //           // email not valid
-      //   }
-      //   else{
 
-      //   }
+        
+		    if (e === 'conflict_email') {
+		      message += 'Email already exists.\n';
+		    }
+		    else if(e === 'required_email'){
+                message += 'Email is required.\n';
+        }
+        else if(e === 'required_password'){
+                message += 'Password is required.\n';
+        }
+        else if (e === 'conflict_username'){
+                message += 'Username already exists.\n';
+        }
+        else if (error === ' invalid_email'){
+                message += 'Email not valid.\n';
+        }
+        else{
+          message += 'Error: User not registered.\n';
+        }
 		  }
+      this.loading.dismiss();
+      showAlert(message);
+
 		});
 
   }
