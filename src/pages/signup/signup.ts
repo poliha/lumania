@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, LoadingController, AlertController } from 'ionic-angular';
 import { Auth, User, UserDetails, IDetailedError } from '@ionic/cloud-angular';
-
+import { Login } from '../login/login';
 /**
  * Generated class for the Signup page.
  *
@@ -20,14 +20,47 @@ export class Signup {
   	'name': ""
   };
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public auth: Auth, public user: User) {
+  loading: any;
+  alert: any;
+
+  constructor(public navCtrl: NavController, public navParams: NavParams, public alertCtrl: AlertController,
+    public auth: Auth, public user: User, public loadingCtrl: LoadingController) {
   }
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad Signup');
   }
 
+  showLoader(){
+     this.loading = this.loadingCtrl.create({
+      content: "Creating Account..."
+    });
+    this.loading.present();
+  }
+
+
+  showAlert(){
+     this.alert = this.alertCtrl.create({
+      title: 'Signup Successful',
+      message: 'Login to  access your account',
+      buttons: [
+        {
+          text: 'Login',
+          handler: () => {
+            this.navCtrl.push(Login);
+          }
+        }
+      ]
+    });
+    this.alert.present();
+
+  }
+
+
   doSignUp(){
+    // show loading message
+    showLoader();
+
   	let details: UserDetails = {
   		'email': this.account.email,
   		'password': this.account.password,
@@ -36,11 +69,15 @@ export class Signup {
   	console.log('details: ', details);
 
   	this.auth.signup(details).then(() => {
-		  alert("user sign up successful");
+		  // hide loading message
+      this.loading.dismiss();
+      showAlert();
+      
 		  console.log("user: ",this.user);
 		}, (err: IDetailedError<string[]>) => {
 		  for (let e of err.details) {
-		  	console.log(e);
+		    this.loading.dismiss();
+      	console.log(e);
 		  	// TO DO handle errors
 		    // if (e === 'conflict_email') {
 		    //   // alert('Email already exists.');
