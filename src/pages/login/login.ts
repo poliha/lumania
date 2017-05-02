@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { Auth, User} from '@ionic/cloud-angular';
+import { PasswordReset } from '../password-reset/password-reset';
 /**
  * Generated class for the Login page.
  *
@@ -42,6 +43,10 @@ export class Login {
         console.log(err);
 
     });
+  }
+
+  requestPassword(){
+    this.navCtrl.push(PasswordReset);
   }
 
 }

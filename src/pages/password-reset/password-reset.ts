@@ -14,11 +14,24 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 })
 export class PasswordReset {
 
+	email: string;
+	part: string;
+	account: {auth_code: string, password: string, confirm_password: string} = {
+		'auth_code': "",
+  	'password': "",
+  	'confirm_password': ""
+  };
+
   constructor(public navCtrl: NavController, public navParams: NavParams) {
+  	this.part = "request";
   }
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad PasswordReset');
+  }
+
+  requestReset(){
+
   }
 
 }
