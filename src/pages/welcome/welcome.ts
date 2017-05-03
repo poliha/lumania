@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { Login } from '../login/login';
 import { Signup } from '../signup/signup';
+import { AuthService } from '../../providers/auth-service';
+import { Dashboard } from '../dashboard/dashboard';
 
 /**
  * Generated class for the Welcome page.
@@ -16,11 +18,17 @@ import { Signup } from '../signup/signup';
 })
 export class Welcome {
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public authService: AuthService) {
+    if (this.authService.isLoggedIn()) { 
+      this.navCtrl.push(Dashboard);
+    } else {
+      console.log("nt auth");
+      
+    }
   }
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad Welcomeq');
+    console.log('ionViewDidLoad Welcome');
   }
 
   login() {

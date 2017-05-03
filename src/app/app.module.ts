@@ -3,6 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { CloudSettings, CloudModule } from '@ionic/cloud-angular';
 import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
 
+
 import { Http } from '@angular/http';
 
 import { Lumania } from './app.component';
@@ -10,10 +11,15 @@ import { Welcome } from '../pages/welcome/welcome';
 import { Login } from '../pages/login/login';
 import { Signup } from '../pages/signup/signup';
 import { PasswordReset } from '../pages/password-reset/password-reset';
-import { AboutPage } from '../pages/about/about';
-import { ContactPage } from '../pages/contact/contact';
-import { HomePage } from '../pages/home/home';
-import { TabsPage } from '../pages/tabs/tabs';
+import { Dashboard } from '../pages/dashboard/dashboard';
+import { Rates } from '../pages/rates/rates';
+import { Contacts } from '../pages/contacts/contacts';
+import { Wallet } from '../pages/wallet/wallet';
+import { News } from '../pages/news/news';
+import { Profile } from '../pages/profile/profile';
+
+
+import {AuthService} from '../providers/auth-service';
 
 
 import { StatusBar } from '@ionic-native/status-bar';
@@ -36,10 +42,12 @@ let pages = [
     Signup,
     Login,
     PasswordReset,
-    AboutPage,
-    ContactPage,
-    HomePage,
-    TabsPage
+    Dashboard,
+    Rates,
+    Contacts,
+    Wallet,
+    News,
+    Profile
   ];
 
 @NgModule({
@@ -59,7 +67,8 @@ let pages = [
   providers: [
     StatusBar,
     SplashScreen,
-    {provide: ErrorHandler, useClass: IonicErrorHandler}
+    {provide: ErrorHandler, useClass: IonicErrorHandler},
+    AuthService
   ]
 })
 export class AppModule {}

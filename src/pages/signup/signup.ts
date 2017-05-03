@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, LoadingController, AlertController } from 'ionic-angular';
-import { Auth, User, UserDetails, IDetailedError } from '@ionic/cloud-angular';
+import { UserDetails} from '@ionic/cloud-angular';
 import { Login } from '../login/login';
+import { Dashboard } from '../dashboard/dashboard';
+import { AuthService } from '../../providers/auth-service';
 /**
  * Generated class for the Signup page.
  *
@@ -22,9 +24,16 @@ export class Signup {
 
   loading: any;
   alert: any;
+  messages: any = [];
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public alertCtrl: AlertController,
-    public auth: Auth, public user: User, public loadingCtrl: LoadingController) {
+     public loadingCtrl: LoadingController, public authService: AuthService) {
+    if (this.authService.isLoggedIn()) { 
+      this.navCtrl.push(Dashboard);
+    } else {
+      console.log("nt auth");
+      
+    }
   }
 
   ionViewDidLoad() {
@@ -55,55 +64,57 @@ export class Signup {
     this.alert.present();
 
   }
-
+  toDB(){
+    this.navCtrl.push(Dashboard);
+  }
 
   doSignUp(){
     // show loading message
-    showLoader();
+    this.showLoader();
 
   	let details: UserDetails = {
   		'email': this.account.email,
   		'password': this.account.password,
-  		'name': this.account.name
+  		'name': this.account.name,
+      'custom' : {
+        'age': '19',
+        'sex': 'male'
+      }
   	};
   	console.log('details: ', details);
 
-  	this.auth.signup(details).then(() => {
-		  // hide loading message
+    this.authService.signUp(details).then((resp) => {
       this.loading.dismiss();
-      showAlert('Login to  access your account');
-      
-		  console.log("user: ",this.user);
-		}, (err: IDetailedError<string[]>) => {
-		  let message = "";
-      for (let e of err.details) {
-		    
-      	console.log(e);
+      console.log(resp);
 
-        
-		    if (e === 'conflict_email') {
-		      message += 'Email already exists.\n';
-		    }
-		    else if(e === 'required_email'){
-                message += 'Email is required.\n';
-        }
-        else if(e === 'required_password'){
-                message += 'Password is required.\n';
-        }
-        else if (e === 'conflict_username'){
-                message += 'Username already exists.\n';
-        }
-        else if (error === ' invalid_email'){
-                message += 'Email not valid.\n';
-        }
-        else{
-          message += 'Error: User not registered.\n';
-        }
-		  }
-      this.loading.dismiss();
-      showAlert(message);
+      if (resp.status === 'error') {
+        this.messages = resp.messages;
+        throw new Error("error");
 
-		});
+      }
+
+      if (resp.status === 'success') {
+        // to do send ntification email
+        // attempt to login user
+        return this.authService.login(details);
+      }
+
+    })
+    .then((resp) => {
+      if (resp.status === 'error') {
+        this.messages = resp.messages;
+      }
+
+      if (resp.status === 'success') {
+        // navigate to dashboard
+        this.navCtrl.push(Dashboard);
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    })
+
+
 
   }
 }
