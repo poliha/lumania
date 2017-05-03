@@ -64,9 +64,7 @@ export class Signup {
     this.alert.present();
 
   }
-  toDB(){
-    this.navCtrl.push(Dashboard);
-  }
+ 
 
   doSignUp(){
     // show loading message
