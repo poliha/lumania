@@ -4,17 +4,14 @@ import { UserDetails} from '@ionic/cloud-angular';
 import { Login } from '../login/login';
 import { Dashboard } from '../dashboard/dashboard';
 import { AuthService } from '../../providers/auth-service';
-/**
- * Generated class for the Signup page.
- *
- * See http://ionicframework.com/docs/components/#navigation for more info
- * on Ionic pages and navigation.
- */
+import { Utility } from '../../providers/utility';
+
 @IonicPage()
 @Component({
   selector: 'page-signup',
   templateUrl: 'signup.html',
 })
+
 export class Signup {
 	account: {name: string, email: string, password: string} = {
 		'email': "",
@@ -27,12 +24,12 @@ export class Signup {
   messages: any = [];
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public alertCtrl: AlertController,
-     public loadingCtrl: LoadingController, public authService: AuthService) {
-    if (this.authService.isLoggedIn()) { 
+     public loadingCtrl: LoadingController, public authService: AuthService, public utility: Utility) {
+
+    if (this.authService.isLoggedIn()) {
       this.navCtrl.push(Dashboard);
     } else {
       console.log("nt auth");
-      
     }
   }
 
@@ -76,12 +73,14 @@ export class Signup {
   		'name': this.account.name,
       'custom' : {
         'age': '19',
-        'sex': 'male'
+        'sex': 'male',
+        'email_verification': this.utility.randomString()
       }
   	};
   	console.log('details: ', details);
 
-    this.authService.signUp(details).then((resp) => {
+    this.authService.signUp(details)
+    .then((resp) => {
       this.loading.dismiss();
       console.log(resp);
 
@@ -92,7 +91,7 @@ export class Signup {
       }
 
       if (resp.status === 'success') {
-        // to do send ntification email
+        // to do send ntification email with verification code
         // attempt to login user
         return this.authService.login(details);
       }

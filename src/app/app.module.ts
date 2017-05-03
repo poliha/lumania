@@ -20,6 +20,7 @@ import { Profile } from '../pages/profile/profile';
 
 
 import {AuthService} from '../providers/auth-service';
+import {Utility} from '../providers/utility';
 
 
 import { StatusBar } from '@ionic-native/status-bar';
@@ -68,7 +69,8 @@ let pages = [
     StatusBar,
     SplashScreen,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
-    AuthService
+    AuthService,
+    Utility
   ]
 })
 export class AppModule {}
