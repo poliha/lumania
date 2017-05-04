@@ -77,7 +77,7 @@ export class AuthService {
   }
 
   logout(){
-
+  	return this.auth.logout();
   }
 
   isLoggedIn(){
