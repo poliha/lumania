@@ -74,7 +74,7 @@ export class Signup {
       'custom' : {
         'age': '19',
         'sex': 'male',
-        'email_verification': this.utility.randomString()
+        'email_verification': this.utility.randomString(6)
       }
   	};
   	console.log('details: ', details);
