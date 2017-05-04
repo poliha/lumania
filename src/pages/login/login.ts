@@ -40,7 +40,7 @@ export class Login {
 
   showLoader(){
      this.loading = this.loadingCtrl.create({
-      content: "Creating Account..."
+      content: "Authenticating..."
     });
     this.loading.present();
   }

@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, PopoverController } from 'ionic-angular';
+import { ProfileMenu } from '../profile-menu/profile-menu';
+
 
 /**
  * Generated class for the Profile page.
@@ -14,11 +16,20 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 })
 export class Profile {
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
+  constructor(public navCtrl: NavController, public navParams: NavParams,
+  	public popoverCtrl: PopoverController) {
   }
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad Profile');
   }
+
+  showMenu(openMenuEvent) {
+    let popover = this.popoverCtrl.create(ProfileMenu);
+    popover.present({
+    	ev: openMenuEvent
+    });
+  }
+
 
 }

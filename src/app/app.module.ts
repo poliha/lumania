@@ -17,6 +17,7 @@ import { Contacts } from '../pages/contacts/contacts';
 import { Wallet } from '../pages/wallet/wallet';
 import { News } from '../pages/news/news';
 import { Profile } from '../pages/profile/profile';
+import { ProfileMenu } from '../pages/profile-menu/profile-menu';
 
 
 import {AuthService} from '../providers/auth-service';
@@ -48,7 +49,8 @@ let pages = [
     Contacts,
     Wallet,
     News,
-    Profile
+    Profile,
+    ProfileMenu
   ];
 
 @NgModule({
