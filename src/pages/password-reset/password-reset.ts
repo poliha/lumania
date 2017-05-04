@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
-import { Auth, User} from '@ionic/cloud-angular';
+import { IonicPage, NavController, NavParams, ToastController } from 'ionic-angular';
+import { AuthService } from '../../providers/auth-service';
 
 /**
  * Generated class for the PasswordReset page.
@@ -22,9 +22,10 @@ export class PasswordReset {
   	'password': "",
   	'confirm_password': ""
   };
+  messages: any = [];
 
-  constructor(public navCtrl: NavController, public navParams: NavParams,
-  		public auth: Auth, public user: User) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, private toastCtrl: ToastController,
+  		public authService: AuthService) {
   	this.part = "request";
   }
 
@@ -32,22 +33,61 @@ export class PasswordReset {
     console.log('ionViewDidLoad PasswordReset');
   }
 
+  showToast(m) {
+    let toast = this.toastCtrl.create({
+      message: m,
+      duration: 5000,
+      position: 'middle'
+    });
+
+    toast.onDidDismiss(() => {
+      console.log('Dismissed toast');
+      this.part = "change";
+    });
+
+    toast.present();
+  }
+
   requestReset(){
-  	this.auth.requestPasswordReset(this.email).then((d) => {
+  	this.authService.resetPasswordRequest(this.email)
+    .then((resp) => {
 
-        // success
-        console.log(d);
+      console.log(resp);
 
-    }, (err) => {
+      if (resp.status === 'error') {
+        this.messages = resp.messages;
 
-   	    // problem logging in
-        console.log(err);
 
-    });;
+      }
+
+      if (resp.status === 'success') {
+        // display toast 
+        // navigate to new tab
+        this.showToast('Please check your mail for the authorisation code');
+      }
+
+    });
   }
 
   confirmReset(){
-  	this.auth.confirmPasswordReset(this.account.auth_code, this.account.password);
+  	this.authService.changePassword(this.account.auth_code, this.account.password)
+    .then((resp) => {
+
+      console.log(resp);
+
+      if (resp.status === 'error') {
+        this.messages = resp.messages;
+
+
+      }
+
+      if (resp.status === 'success') {
+        // display toast 
+        // navigate to new tab
+        this.showToast('Password changed successfuly');
+      }
+
+    });
   }
 
 }

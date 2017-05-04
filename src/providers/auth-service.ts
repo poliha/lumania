@@ -68,7 +68,7 @@ export class AuthService {
   				};
     }, (err) => {
         return {"status": "error",
-  					"messages": ["login error"]
+  					"messages": ["Login error. Please verify details"]
   				};
  
     });
@@ -78,6 +78,57 @@ export class AuthService {
 
   logout(){
   	return this.auth.logout();
+  }
+
+  resetPasswordRequest(email){
+  	// email = 'p@l.cim';
+  	let message = [];
+  	let req = this.auth.requestPasswordReset(email).then((d) => {
+
+        // success
+        console.log("rtn", d);
+        return {"status": "success",
+	  					"messages": message
+	  				};
+
+    }, (err) => {
+
+   	    // problem logging in
+        console.log(err);
+
+        message.push("Invalid input");
+        return {"status": "error",
+	  					"messages": message
+	  				};
+
+    });
+  	return req;
+  }
+
+  changePassword(code, password){
+  	 // code = '2';
+  	let message = [];
+  	let req = this.auth.confirmPasswordReset(code, password).then((d) => {
+
+		        // success
+		        console.log("rtn", d);
+		        return {"status": "success",
+			  					"messages": message
+			  				};
+
+		    }, (err: IDetailedError<string[]>) => {
+
+		   	    // problem logging in
+		        console.log(err);
+		        console.log(err.details);
+
+		        message.push("Invalid input");
+		        return {"status": "error",
+			  					"messages": message
+			  				};
+
+		    });
+  	return req;
   }
 
   isLoggedIn(){
