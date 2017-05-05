@@ -106,7 +106,7 @@ export class AuthService {
   }
 
   changePassword(code, password){
-  	 // code = '2';
+  	// code = '2';
   	let message = [];
   	let req = this.auth.confirmPasswordReset(code, password).then((d) => {
 
@@ -133,6 +133,41 @@ export class AuthService {
 
   isLoggedIn(){
   	return this.auth.isAuthenticated();
+  }
+
+  lapiToken(token){
+  	this.user.set('lapi_token', token);
+  	let req = this.user.save().then(() => {
+			// return {"status": "success",
+  	// 				"messages": ["save success"]
+  	// 			};
+    }, (err) => {
+      //   return {"status": "error",
+  				// 	"messages": ["save error. Please verify details"]
+  				// };
+    });
+
+  	return req;
+  }
+
+  verifyEmail(code){
+  	let req: any;
+  	if (code === this.user.get('email_auth_code', 1)) {
+			this.user.set('email_verified', true);
+			req = this.user.save().then(() => {
+
+    }, (err) => {
+    	// set local copy to false
+    	this.user.set('email_verified', false);
+    });
+
+			return req;
+
+  	} else {
+  		return req;
+  	}
+
+
   }
 
 }

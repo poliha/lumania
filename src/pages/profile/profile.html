@@ -19,6 +19,25 @@
 </ion-header>
 
 
-<ion-content padding>
-
+<ion-content>
+  <ion-list no-lines>
+    <button ion-item (click)="itemSelected(item)">
+      <ion-avatar item-left>
+          <img src="{{authService.user.details.image}}">
+      </ion-avatar>
+        {{authService.user.details.name}}
+    </button> 
+    <button ion-item (click)="itemSelected(item)">
+         <ion-icon name="cog" item-left></ion-icon>
+        Settings
+    </button>
+    <button ion-item (click)="itemSelected(item)">
+        <ion-icon name="call" item-left></ion-icon>
+        Help &amp; Support
+    </button>  
+  </ion-list>
+  <div ion-item (click)="logout()" color="danger" margin-top>
+    <ion-icon name="close" item-left></ion-icon>
+     Logout
+  </div>
 </ion-content>

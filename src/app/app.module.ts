@@ -18,10 +18,13 @@ import { Wallet } from '../pages/wallet/wallet';
 import { News } from '../pages/news/news';
 import { Profile } from '../pages/profile/profile';
 import { ProfileMenu } from '../pages/profile-menu/profile-menu';
+import { VerifyEmail } from '../pages/verify-email/verify-email';
 
 
 import {AuthService} from '../providers/auth-service';
 import {Utility} from '../providers/utility';
+import {Api} from '../providers/api';
+import {Lapi} from '../providers/lapi';
 
 
 import { StatusBar } from '@ionic-native/status-bar';
@@ -50,7 +53,8 @@ let pages = [
     Wallet,
     News,
     Profile,
-    ProfileMenu
+    ProfileMenu,
+    VerifyEmail
   ];
 
 @NgModule({
@@ -72,7 +76,9 @@ let pages = [
     SplashScreen,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
     AuthService,
-    Utility
+    Utility,
+    Api,
+    Lapi
   ]
 })
 export class AppModule {}

@@ -14,5 +14,37 @@
 
 
 <ion-content padding>
+	<ion-card *ngIf="!authService.user.get('email_verified')">
+	  <ion-card-header color="danger">
+	    Verify Email
+	  </ion-card-header>
+	  <ion-card-content>
+	    Please verify your email with the  code sent to your email address
+	  </ion-card-content>
+	  <ion-row>
+	    <ion-col>
+	      <button (click)="verifyEmail()" ion-button icon-left clear small>
+	        <ion-icon name="checkmark"></ion-icon>
+	        <div>Enter code</div>
+	      </button>
+	    </ion-col>
+	    <ion-col>
+	      <button ion-button icon-left clear small>
+	        <ion-icon name="refresh"></ion-icon>
+	        <div>Resend code</div>
+	      </button>
+	    </ion-col>
+    </ion-row>
+
+	</ion-card>
+
+	<ion-card>
+	  <ion-card-header color="primary">
+	    Fund account
+	  </ion-card-header>
+	  <ion-card-content>
+	    Deposit funds into your account
+	  </ion-card-content>
+	</ion-card>
 
 </ion-content>

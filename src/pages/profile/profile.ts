@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, PopoverController } from 'ionic-angular';
 import { ProfileMenu } from '../profile-menu/profile-menu';
-
+import { AuthService } from '../../providers/auth-service';
+import { Welcome } from '../welcome/welcome';
 
 /**
  * Generated class for the Profile page.
@@ -17,7 +18,7 @@ import { ProfileMenu } from '../profile-menu/profile-menu';
 export class Profile {
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
-  	public popoverCtrl: PopoverController) {
+  	public popoverCtrl: PopoverController, public authService: AuthService) {
   }
 
   ionViewDidLoad() {
@@ -30,6 +31,10 @@ export class Profile {
     	ev: openMenuEvent
     });
   }
+  logout(){
 
+    this.authService.logout();
+    this.navCtrl.push(Welcome);
+  }
 
 }

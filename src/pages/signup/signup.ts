@@ -5,6 +5,7 @@ import { Login } from '../login/login';
 import { Dashboard } from '../dashboard/dashboard';
 import { AuthService } from '../../providers/auth-service';
 import { Utility } from '../../providers/utility';
+import { Lapi } from '../../providers/lapi';
 
 @IonicPage()
 @Component({
@@ -22,10 +23,11 @@ export class Signup {
   loading: any;
   alert: any;
   messages: any = [];
-
+  auth_code: any;
   constructor(public navCtrl: NavController, public navParams: NavParams, public alertCtrl: AlertController,
-     public loadingCtrl: LoadingController, public authService: AuthService, public utility: Utility) {
-
+     public loadingCtrl: LoadingController, public authService: AuthService, public utility: Utility,
+     public lapi: Lapi ) {
+    this.auth_code = this.utility.randomString(6);
     if (this.authService.isLoggedIn()) {
       this.navCtrl.push(Dashboard);
     } else {
@@ -61,7 +63,7 @@ export class Signup {
     this.alert.present();
 
   }
- 
+
 
   doSignUp(){
     // show loading message
@@ -74,14 +76,15 @@ export class Signup {
       'custom' : {
         'age': '19',
         'sex': 'male',
-        'email_verification': this.utility.randomString(6)
+        'email_auth_code': this.auth_code,
+        'email_verified': false
       }
   	};
   	console.log('details: ', details);
 
     this.authService.signUp(details)
     .then((resp) => {
-      this.loading.dismiss();
+
       console.log(resp);
 
       if (resp.status === 'error') {
@@ -103,11 +106,47 @@ export class Signup {
       }
 
       if (resp.status === 'success') {
-        // navigate to dashboard
-        this.navCtrl.push(Dashboard);
+        // signup user on lapi
+        let acctInfo: any = {};
+          acctInfo.id = this.authService.user.id;
+          acctInfo.name = this.account.name;
+          acctInfo.email = this.account.email;
+          acctInfo.auth_code = this.auth_code;
+
+          this.lapi.signUp(acctInfo)
+            .map(res => res.json())
+            .subscribe((resp) => {
+              console.log(resp);
+
+              // To do store token
+              return this.authService.lapiToken(resp.content.data.token);
+
+            }, (err) => {
+              // to do add toast
+              console.log(err);
+
+            });
+
+
+
       }
     })
+    .then(() => {
+        // hide loading
+        this.loading.dismiss();
+        // navigate to dashboard
+        this.navCtrl.push(Dashboard);
+
+    },
+    (err) => {
+        this.messages.push('Signup error, Please try again');
+        throw new Error("error");
+    }
+    )
     .catch((error) => {
+      // hide loading
+      this.loading.dismiss();
+      // to do show toast
       console.log(error);
     })
 
