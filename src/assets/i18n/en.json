@@ -68,5 +68,6 @@
   "SEARCH_PLACEHOLDER" : "Search the items list, e.g. \"Donald Duck\"",
   "RESET_BUTTON": "Reset Password",
   "AUTH_CODE": "Auth Code",
-  "CONFIRM_PASSWORD": "Confirm Password"
+  "CONFIRM_PASSWORD": "Confirm Password",
+  "SAVE_BUTTON": "Save"
 }

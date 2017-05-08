@@ -124,6 +124,7 @@ export class Signup {
             }, (err) => {
               // to do add toast
               console.log(err);
+              alert(err);
 
             });
 

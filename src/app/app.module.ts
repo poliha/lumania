@@ -18,7 +18,9 @@ import { Wallet } from '../pages/wallet/wallet';
 import { News } from '../pages/news/news';
 import { Profile } from '../pages/profile/profile';
 import { ProfileMenu } from '../pages/profile-menu/profile-menu';
+import { ProfileEdit } from '../pages/profile-edit/profile-edit';
 import { VerifyEmail } from '../pages/verify-email/verify-email';
+import { ChooseImagePage } from '../pages/choose-image-page/choose-image-page';
 
 
 import {AuthService} from '../providers/auth-service';
@@ -54,7 +56,9 @@ let pages = [
     News,
     Profile,
     ProfileMenu,
-    VerifyEmail
+    VerifyEmail,
+    ProfileEdit,
+    ChooseImagePage
   ];
 
 @NgModule({
