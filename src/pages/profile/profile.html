@@ -21,7 +21,7 @@
 
 <ion-content>
   <ion-list no-lines>
-    <button ion-item (click)="itemSelected(item)">
+    <button ion-item (click)="editProfile()">
       <ion-avatar item-left>
           <img src="{{authService.user.details.image}}">
       </ion-avatar>
@@ -32,11 +32,11 @@
         Settings
     </button>
     <button ion-item (click)="itemSelected(item)">
-         <ion-icon name="cog" item-left></ion-icon>
+         <ion-icon name="key" item-left></ion-icon>
         Change Password
     </button>
     <button ion-item (click)="itemSelected(item)">
-         <ion-icon name="cog" item-left></ion-icon>
+         <ion-icon name="lock" item-left></ion-icon>
         Change PIN
     </button>        
     <button ion-item (click)="itemSelected(item)">
