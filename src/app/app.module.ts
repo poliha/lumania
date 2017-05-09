@@ -22,6 +22,7 @@ import { ProfileEdit } from '../pages/profile-edit/profile-edit';
 import { VerifyEmail } from '../pages/verify-email/verify-email';
 import { ChooseImagePage } from '../pages/choose-image-page/choose-image-page';
 import { PaymentMethod } from '../pages/payment-method/payment-method';
+import { CardPayment } from '../pages/card-payment/card-payment';
 
 
 import {AuthService} from '../providers/auth-service';
@@ -60,14 +61,20 @@ let pages = [
     VerifyEmail,
     ProfileEdit,
     ChooseImagePage,
-    PaymentMethod
+    PaymentMethod,
+    CardPayment
   ];
+
+let configOptions = {
+  production: false,
+  defaultCurrency: 'NGN'
+}
 
 @NgModule({
   declarations: pages,
   imports: [
     BrowserModule,
-    IonicModule.forRoot(Lumania),
+    IonicModule.forRoot(Lumania, configOptions),
     CloudModule.forRoot(cloudSettings),
     TranslateModule.forRoot({
       provide: TranslateLoader,
