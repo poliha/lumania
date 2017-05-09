@@ -47,4 +47,37 @@
 	  </ion-card-content>
 	</ion-card>
 
+	<ion-list>
+	  <ion-list-header>
+	    Current Balance
+	  </ion-list-header>
+	  <div *ngIf="!authService.user.get('account')">
+	  	<button (click)="showPaymentPage()" ion-item>No account. Fund Account </button>
+		  
+	  </div>
+	  <div *ngIf="authService.user.get('account')">
+	  	<ion-item>
+	  		XLM <b>10,000</b>
+	  		<ion-icon name="rose" item-right></ion-icon>
+	  		<ion-avatar item-left>
+          <img src="{{authService.user.details.image}}">
+      	</ion-avatar>
+	  	</ion-item>
+		  <ion-item>
+	  		NGN <b>10,000</b>
+	  		
+	  		<ion-avatar item-left>
+          <img src="{{authService.user.details.image}}">
+      	</ion-avatar>
+	  	</ion-item>
+	  	<ion-item>
+	  		NGN <b>10,000</b>
+	  		
+	  		<ion-avatar item-right>
+          <img src="{{authService.user.details.image}}">
+      	</ion-avatar>
+	  	</ion-item>
+	  </div>	  
+	</ion-list>
+
 </ion-content>

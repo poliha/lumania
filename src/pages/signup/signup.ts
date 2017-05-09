@@ -74,7 +74,7 @@ export class Signup {
   		'password': this.account.password,
   		'name': this.account.name,
       'custom' : {
-        'age': '19',
+        'accounts': false,
         'sex': 'male',
         'email_auth_code': this.auth_code,
         'email_verified': false

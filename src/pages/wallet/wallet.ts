@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { VerifyEmail } from '../verify-email/verify-email';
+import { PaymentMethod } from '../payment-method/payment-method';
 import { AuthService } from '../../providers/auth-service';
 /**
  * Generated class for the Wallet page.
@@ -25,6 +26,10 @@ export class Wallet {
 
   verifyEmail(){
   	this.navCtrl.push(VerifyEmail);
+  }
+
+  showPaymentPage(){
+    this.navCtrl.push(PaymentMethod);
   }
 
 }

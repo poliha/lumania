@@ -21,6 +21,7 @@ import { ProfileMenu } from '../pages/profile-menu/profile-menu';
 import { ProfileEdit } from '../pages/profile-edit/profile-edit';
 import { VerifyEmail } from '../pages/verify-email/verify-email';
 import { ChooseImagePage } from '../pages/choose-image-page/choose-image-page';
+import { PaymentMethod } from '../pages/payment-method/payment-method';
 
 
 import {AuthService} from '../providers/auth-service';
@@ -58,7 +59,8 @@ let pages = [
     ProfileMenu,
     VerifyEmail,
     ProfileEdit,
-    ChooseImagePage
+    ChooseImagePage,
+    PaymentMethod
   ];
 
 @NgModule({
