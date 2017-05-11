@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-// import { Http } from '@angular/http';
+import { Http } from '@angular/http';
 // import 'rxjs/add/operator/map';
 
 /*
@@ -11,7 +11,9 @@ import { Injectable } from '@angular/core';
 @Injectable()
 export class Utility {
 
-  constructor() {
+  tickerUrl = 'https://api.cryptonator.com/api/ticker/usd-xlm'
+
+  constructor(public http: Http) {
     console.log('Hello Utility Provider');
   }
 
@@ -29,6 +31,24 @@ export class Utility {
     }
     console.log("random text: ",text);
     return text;
+  }
+
+  getTxRef(){
+    let timeInMs = Date.now();
+    let randomString = this.randomString(8);
+    let txRef = timeInMs+randomString;
+    return txRef;
+  }
+
+  getRate(){
+    return this.http.get(this.tickerUrl).share()
+      .map(res => res.json())
+      .subscribe((resp) => {
+          console.log(resp);
+      }, (err) => {
+          console.log(err);
+          // use default
+      });
   }
 
 }

@@ -150,6 +150,16 @@ export class AuthService {
   	return req;
   }
 
+  getLapiToken(){
+    return this.user.get('lapi_token');
+    
+  }
+
+  getUuid(){
+    return this.user.id;
+    
+  }  
+
   verifyEmail(code){
   	let req: any;
   	if (code === this.user.get('email_auth_code', 1)) {

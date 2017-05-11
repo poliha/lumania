@@ -29,6 +29,9 @@ import {AuthService} from '../providers/auth-service';
 import {Utility} from '../providers/utility';
 import {Api} from '../providers/api';
 import {Lapi} from '../providers/lapi';
+import {PaymentService} from '../providers/payment-service';
+import {LoadingService} from '../providers/loading-service';
+import {AlertService} from '../providers/alert-service';
 
 
 import { StatusBar } from '@ionic-native/status-bar';
@@ -91,7 +94,10 @@ let configOptions = {
     AuthService,
     Utility,
     Api,
-    Lapi
+    Lapi,
+    PaymentService,
+    LoadingService,
+    AlertService
   ]
 })
 export class AppModule {}

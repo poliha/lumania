@@ -18,17 +18,20 @@
 	<ion-list margin-top>
 
       <ion-item>
-        <ion-input color="primary" type="number" [(ngModel)]="amount" placeholder="Amount"></ion-input>
+        <ion-input color="primary" type="number" [(ngModel)]="amount" (change)="calculateXLM()" placeholder="Amount"></ion-input>
         <ion-select [(ngModel)]="currency">
-		      <ion-option value="ngn" selected="true">NGN</ion-option>
-		      <ion-option value="usd">USD</ion-option>
-		      <ion-option value="eur">EUR</ion-option>
+		      <ion-option value="NGN" selected="true">NGN</ion-option>
+		      <ion-option value="USD">USD</ion-option>
+		      <ion-option value="EUR">EUR</ion-option>
 		    </ion-select>
+      </ion-item>
+      <ion-item>
+        In XLM: {{lumens_amount}}
       </ion-item>
   </ion-list>
 
   <div padding>
-	  <button ion-button color="primary" block>Pay</button>
+	  <button ion-button color="primary" block (click)="pay()" >Pay</button>
 	  
   </div>
 
