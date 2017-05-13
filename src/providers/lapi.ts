@@ -62,6 +62,17 @@ export class Lapi {
     return seq;
   }
 
+  sellLumens(txObj: any){
+    // add authorization header with jwt token
+    let headers = new Headers({ 'Authorization': 'Bearer ' + this.authService.getLapiToken() });
+    let options = new RequestOptions({ headers: headers });
+
+    let seq = this.api.post('lumens/sell', txObj, options);
+    seq.map(res => res.json());
+
+    return seq;
+  }
+
   getNgnRate(){
     let seq = this.api.get('ngn_usd');
     seq

@@ -132,7 +132,7 @@ export class PaymentService {
   }
   
   requestLumens(txRef, flwRef, accountId, amount){
-     let body = {
+    let body = {
         "txRef": txRef,
         "flwRef": flwRef,
         "token": this.authService.getLapiToken(),
@@ -145,8 +145,6 @@ export class PaymentService {
             .subscribe((resp) => {
               console.log(resp);
               this.loadingService.hideLoader();
-              // get payment from user
-              // return initRavePay(options);
               this.alertService.basicAlert("Success", amount+"XLM added to account" ,"Ok");
             }, (err) => {
               // to do add toast
@@ -154,9 +152,45 @@ export class PaymentService {
               this.loadingService.hideLoader();
               this.alertService.basicAlert("Request Saved", "Your request will be automatically processed in 10minutes" ,"Ok");
 
-              // alert(err);
+            });
+
+  }
+
+  sellLumens(fiatAmount, xlmAmount, currency, currentRate, currentAccount){
+
+    let body = {
+        "fiatAmount": fiatAmount,
+        "xlmAmount": xlmAmount,
+        "currency": currency,
+        "currentRate": currentRate,
+        "accountId": currentAccount,
+        "token": this.authService.getLapiToken(),
+        "uuid":  this.authService.getUuid(),
+        "email": this.authService.user.details.email,
+        "name": this.authService.user.details.name
+      };
+
+    // send lumens to Lumania
+    this.stellarSdk.sendLumens().then((result)=>{
+        
+        body.tx_id = result.hash;
+        // pass bankaccount to lapi for crediting
+        this.lapi.sellLumens(body)
+            .map(res => res.json())
+            .subscribe((resp) => {
+              console.log(resp);
+              this.loadingService.hideLoader();
+              this.alertService.basicAlert("Success", xlmAmount+"XLM sold" ,"Ok");
+            }, (err) => {
+              // to do add toast
+              console.log(err);
+              this.loadingService.hideLoader();
+              this.alertService.basicAlert("Request Saved", "Your request will be automatically processed in 10minutes" ,"Ok");
 
             });
+
+    });
+
 
   }
 
