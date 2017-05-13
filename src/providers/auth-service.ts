@@ -151,14 +151,23 @@ export class AuthService {
   }
 
   getLapiToken(){
-    return this.user.get('lapi_token');
+    return this.user.get('lapi_token',false);
     
   }
 
   getUuid(){
     return this.user.id;
-    
-  }  
+
+  }
+
+  getAccountId(){
+    let acct = this.user.get('account', false);
+    if (acct) {
+      return  acct.account_id;
+    } else {
+      return false;
+    }
+  }
 
   verifyEmail(code){
   	let req: any;
@@ -178,6 +187,18 @@ export class AuthService {
   	}
 
 
+  }
+
+  saveData(key, value){
+    let req: any;
+    this.user.set(key, value);
+    req = this.user.save().then(() => {
+
+    }, (err) => {
+
+    });
+
+    return req;
   }
 
 }

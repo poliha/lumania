@@ -7,8 +7,8 @@ import 'rxjs/add/operator/map';
  */
 @Injectable()
 export class Api {
-  // url: string = 'http://localhost:8888';
-  url: string = 'http://lumania.tech:8888';
+  url: string = 'http://localhost:8888';
+  // url: string = 'http://lumania.tech:8888';
 
   constructor(public http: Http) {
   }

@@ -2,7 +2,8 @@ import { NgModule, ErrorHandler } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { CloudSettings, CloudModule } from '@ionic/cloud-angular';
 import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
-
+import { IonicStorageModule } from '@ionic/storage';
+// import { AppConfig }       from './app.config';
 
 import { Http } from '@angular/http';
 
@@ -25,13 +26,15 @@ import { PaymentMethod } from '../pages/payment-method/payment-method';
 import { CardPayment } from '../pages/card-payment/card-payment';
 
 
-import {AuthService} from '../providers/auth-service';
-import {Utility} from '../providers/utility';
-import {Api} from '../providers/api';
-import {Lapi} from '../providers/lapi';
-import {PaymentService} from '../providers/payment-service';
-import {LoadingService} from '../providers/loading-service';
-import {AlertService} from '../providers/alert-service';
+import { AuthService } from '../providers/auth-service';
+import { Utility } from '../providers/utility';
+import { Api } from '../providers/api';
+import { Lapi } from '../providers/lapi';
+import { PaymentService } from '../providers/payment-service';
+import { LoadingService } from '../providers/loading-service';
+import { AlertService } from '../providers/alert-service';
+// import { Storage } from '@ionic/storage';
+import { StellarService } from '../providers/stellar-sdk';
 
 
 import { StatusBar } from '@ionic-native/status-bar';
@@ -70,7 +73,10 @@ let pages = [
 
 let configOptions = {
   production: false,
-  defaultCurrency: 'NGN'
+  defaultCurrency: 'NGN',
+  stellarLiveNetwork: 'https://testnet.stellar.org',
+  stellarTestNetwork: 'https://horizon-testnet.stellar.org',
+  currencyList: ['NGN','USD','EUR','CNY','UGX','ZAR','BWP','INR','KES','GHS','TZS','RWF']
 }
 
 @NgModule({
@@ -79,6 +85,7 @@ let configOptions = {
     BrowserModule,
     IonicModule.forRoot(Lumania, configOptions),
     CloudModule.forRoot(cloudSettings),
+    IonicStorageModule.forRoot(),
     TranslateModule.forRoot({
       provide: TranslateLoader,
       useFactory: (createTranslateLoader),
@@ -97,7 +104,9 @@ let configOptions = {
     Lapi,
     PaymentService,
     LoadingService,
-    AlertService
+    AlertService,
+    Storage,
+    StellarService
   ]
 })
 export class AppModule {}

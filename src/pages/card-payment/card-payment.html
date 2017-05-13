@@ -18,11 +18,10 @@
 	<ion-list margin-top>
 
       <ion-item>
-        <ion-input color="primary" type="number" [(ngModel)]="amount" (change)="calculateXLM()" placeholder="Amount"></ion-input>
+        <ion-input color="primary" type="number" [(ngModel)]="amount"
+        (input)='onInput($event.target.value)' (change)="calculateXLM()" placeholder="Amount"></ion-input>
         <ion-select [(ngModel)]="currency">
-		      <ion-option value="NGN" selected="true">NGN</ion-option>
-		      <ion-option value="USD">USD</ion-option>
-		      <ion-option value="EUR">EUR</ion-option>
+        <ion-option *ngFor="let c of currencyList">{{c}}</ion-option>
 		    </ion-select>
       </ion-item>
       <ion-item>

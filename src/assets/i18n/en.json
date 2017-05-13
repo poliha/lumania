@@ -69,5 +69,8 @@
   "RESET_BUTTON": "Reset Password",
   "AUTH_CODE": "Auth Code",
   "CONFIRM_PASSWORD": "Confirm Password",
-  "SAVE_BUTTON": "Save"
+  "SAVE_BUTTON": "Save",
+  "BUY_BUTTON": "BUY",
+  "SEND_BUTTON": "SEND",
+  "SELL_BUTTON": "SELL"
 }
