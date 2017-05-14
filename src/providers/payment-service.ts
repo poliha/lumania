@@ -158,6 +158,7 @@ export class PaymentService {
 
   sellLumens(fiatAmount, xlmAmount, currency, currentRate, currentAccount){
 
+    this.loadingService.showLoader("Processing...");
     let body = {
         "fiatAmount": fiatAmount,
         "xlmAmount": xlmAmount,
@@ -167,11 +168,12 @@ export class PaymentService {
         "token": this.authService.getLapiToken(),
         "uuid":  this.authService.getUuid(),
         "email": this.authService.user.details.email,
-        "name": this.authService.user.details.name
+        "name": this.authService.user.details.name,
+        "tx_id": ""
       };
 
     // send lumens to Lumania
-    this.stellarSdk.sendLumens().then((result)=>{
+    this.stellarSdk.sendLumens(currentAccount, xlmAmount).then((result)=>{
         
         body.tx_id = result.hash;
         // pass bankaccount to lapi for crediting
@@ -189,7 +191,13 @@ export class PaymentService {
 
             });
 
-    });
+    })
+    .catch((err)=>{
+      
+              console.log(err);
+              this.loadingService.hideLoader();
+    })
+    ;
 
 
   }

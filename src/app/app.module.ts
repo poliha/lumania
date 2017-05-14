@@ -24,6 +24,8 @@ import { VerifyEmail } from '../pages/verify-email/verify-email';
 import { ChooseImagePage } from '../pages/choose-image-page/choose-image-page';
 import { PaymentMethod } from '../pages/payment-method/payment-method';
 import { CardPayment } from '../pages/card-payment/card-payment';
+import { Sell } from '../pages/sell/sell';
+import { Send } from '../pages/send/send';
 
 
 import { AuthService } from '../providers/auth-service';
@@ -68,7 +70,9 @@ let pages = [
     ProfileEdit,
     ChooseImagePage,
     PaymentMethod,
-    CardPayment
+    CardPayment,
+    Sell,
+    Send
   ];
 
 let configOptions = {
@@ -105,7 +109,6 @@ let configOptions = {
     PaymentService,
     LoadingService,
     AlertService,
-    Storage,
     StellarService
   ]
 })

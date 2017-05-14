@@ -6,18 +6,22 @@ import { Observable } from 'rxjs/Rx';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/toPromise';
-
+import { Storage } from '@ionic/storage';
 
 /*
   Generated class for the Lapi provider.
 
   Lapi: Lumania API
+  local storage variables
+    -account_details
+    -rates
 */
 @Injectable()
 export class Lapi {
 	url: string = 'http://localhost:8888/'
 
-  constructor(public http: Http, public authService: AuthService, public api: Api) {
+  constructor(public http: Http, public authService: AuthService, public api: Api,
+    public storage: Storage) {
     console.log('Hello Lapi Provider');
   }
 
@@ -82,12 +86,75 @@ export class Lapi {
   }
 
   getRates(){
-    let seq = this.api.get('rates');
-    seq
-      .map(res => res.json())
-      .catch((error:any) => Observable.throw(error.json().error || 'Server error'));
+    // get from localstorage
+    // if false or timestamp diff > 10mins get from remote
+    //store rates locally
+    // return promise to get rates
 
-    return seq;
+    return this.storage.ready().then(() => {
+
+      return this.storage.get('rates');
+
+    })
+    .then((value)=>{
+      console.log(value);
+      let timestampDiff = 0;
+      if (value) {
+        console.log(value);
+        let timeInMs = Date.now();
+        let rates = value;
+        timestampDiff = timeInMs - rates['timestamp'];
+        console.log(timestampDiff);
+      }
+
+      if (!value || timestampDiff > 60000) { 
+        let seq = this.api.get('rates');
+        seq
+        .map(res => res.json())
+        .catch((error:any) => Observable.throw(error.json().error || 'Server error'));
+
+        return seq;
+
+      } else {
+        // return this.storage.get('rates');
+      }
+
+
+
+    })
+    .then((resp)=>{
+
+      console.log(resp);
+
+      if (resp) { 
+        resp.map(res => res.json()).subscribe((resp) => {
+
+          console.log(resp);
+
+          this.storage.set('rates', resp.content.data);
+          return this.storage.get('rates');
+
+        }, (err) => {
+
+          // to do add toast
+          console.log(err.json());
+          // return old data
+
+        });
+
+      } else {
+        return this.storage.get('rates');
+      }
+
+      
+    });
+
+    // let seq = this.api.get('rates');
+    // seq
+    //   .map(res => res.json())
+    //   .catch((error:any) => Observable.throw(error.json().error || 'Server error'));
+
+    // return seq;
   }
 
 }

@@ -19,8 +19,8 @@
 
       <ion-item>
         <ion-input color="primary" type="number" [(ngModel)]="amount"
-        (input)='onInput($event.target.value)' (change)="calculateXLM()" placeholder="Amount"></ion-input>
-        <ion-select [(ngModel)]="currency">
+        (input)='onInput($event.target.value)'  placeholder="Amount"></ion-input>
+        <ion-select [(ngModel)]="currency" (ionChange)="calculateXLM()">
         <ion-option *ngFor="let c of currencyList">{{c}}</ion-option>
 		    </ion-select>
       </ion-item>

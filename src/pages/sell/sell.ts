@@ -1,5 +1,12 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, Config } from 'ionic-angular';
+import { PaymentService } from '../../providers/payment-service';
+import { AuthService } from '../../providers/auth-service';
+import { Lapi } from '../../providers/lapi';
+import { LoadingService } from '../../providers/loading-service';
+import { Utility } from '../../providers/utility';
+import { StellarService } from '../../providers/stellar-sdk';
+import { AlertService } from '../../providers/alert-service';
 
 /**
  * Generated class for the Sell page.
@@ -14,19 +21,39 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 })
 export class Sell {
 	balances: any = [];
+  currentBalance = 0.00;
   currentAccountId: any = false;
   rates: any = {};
   currentRate: any = 1;
+  xlmAmount = 0.00;
+  fiatAmount = 0.00;
+  sendCurrency = 'XLM';
+  recvCurrency = 'NGN';
+  currencyList = [];
 
-  constructor(public navCtrl: NavController, public navParams: NavParams,
-  	public lapi: Lapi, 	public paymentService: PaymentService, 
-  	public stellarService: StellarService, public authService: AuthService) 
+  constructor(public navCtrl: NavController, public navParams: NavParams, public config: Config,
+    public loadingService: LoadingService, public utility: Utility,	public lapi: Lapi,
+    public paymentService: PaymentService,public alertService: AlertService,
+  	public stellarService: StellarService, public authService: AuthService)
   {
+    this.currencyList = this.config.get('currencyList');
+    // this.currency = this.config.get('defaultCurrency');
   	this.currentAccountId = this.authService.getAccountId();
+    this.currentRate = this.navParams.get('sellRate') || 1.00;
+    this.recvCurrency = this.navParams.get('currency') || 'NGN';
   }
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad Sell');
+  }
+
+
+  ionViewWillEnter(){
+    console.log('getting balance');
+
+    this.getBalance();
+
+
   }
 
   getBalance(){
@@ -36,6 +63,8 @@ export class Sell {
         .then((account)=>{
 
           this.balances = account.balances;
+          this.currentBalance = this.balances[0].balance;
+          this.getRates();
         })
         .catch((error)=>{
 
@@ -50,60 +79,80 @@ export class Sell {
     }
   }
 
-    getRates(){
+  getRates(){
     this.loadingService.showLoader("Getting best rates...");
     this.lapi.getRates()
-      .map(res => res.json())
-      .subscribe((resp) => {
-          this.loadingService.hideLoader();
-          console.log(resp);
-          
-          this.rates = resp.content.data;
-          this.getCurrentRate();
-          // this.calculateBalances();
-        }, (err) => {
+      .then((resp)=>{
+        this.loadingService.hideLoader();
+        console.log(resp);
+        this.rates = resp;
+        this.getCurrentRate();
+
+      })
+      .catch((err) => {
           this.loadingService.hideLoader();
           // to do add toast
-          console.log(err.json());
-        });
+          console.log("error",err.json());
+
+      });
+
+      // .map(res => res.json())
+      // .subscribe((resp) => {
+      //     this.loadingService.hideLoader();
+      //     console.log(resp);
+
+      //     this.rates = resp.content.data;
+      //     this.getCurrentRate();
+      //     // this.calculateBalances();
+      //   }, (err) => {
+      //     this.loadingService.hideLoader();
+      //     // to do add toast
+      //     console.log(err.json());
+      //   });
 
   }
 
   getCurrentRate(){
-  	let target = this.currency+'XLM';
-    this.currentRate = parseFloat(this.rates[target])/parseFloat(this.rates.USDXLM);
+
+    if (this.recvCurrency === 'USD') { 
+      this.currentRate = this.utility.round((1/this.rates.USDXLM), 7);
+    } else {
+      let target = this.recvCurrency+'XLM';
+      this.currentRate = this.utility.round((parseFloat(this.rates[target])/parseFloat(this.rates.USDXLM)), 7);
+    }
+
   }
 
   calculateFiat(value){
-    console.log("calculateinput", value, this.currency, this.amount, this.lumens_amount);
+    // console.log("calculateinput", value, this.currency, this.amount, this.lumens_amount);
     // console.log("rates", this.rates);
 
-    if (this.currency === 'USD') { 
-      this.fiatAmount = parseFloat(this.xlmAmount)*parseFloat(this.rates.USDXLM);
+    if (this.recvCurrency === 'USD') {
+      this.fiatAmount = this.utility.round((this.xlmAmount*this.currentRate), 7);
     } else {
-      let target = this.currency+'XLM';
-      this.fiatAmount = (parseFloat(this.xlmAmount)/parseFloat(this.rates[target]))*parseFloat(this.rates.USDXLM);
+      // let target = this.recvCurrency+'XLM';
+      this.fiatAmount = this.utility.round((this.xlmAmount*this.currentRate),7);
     }
 
   }
 
   calculateXLM(value){
   	this.getCurrentRate();
-    console.log("calculateinput", value, this.currency, this.amount, this.lumens_amount);
+    // console.log("calculateinput", value, this.currency, this.amount, this.lumens_amount);
     // console.log("rates", this.rates);
 
-    if (this.currency === 'USD') {
+    if (this.recvCurrency === 'USD') {
 
-      this.xlmAmount = parseFloat(this.fiatAmount)/parseFloat(this.rates.USDXLM);
+      this.xlmAmount = this.utility.round((this.fiatAmount/this.currentRate),7);
     } else {
-      let target = this.currency+'XLM';
-      this.xlmAmount = (parseFloat(this.fiatAmount)*parseFloat(this.rates[target]))/parseFloat(this.rates.USDXLM);
+      // let target = this.recvCurrency+'XLM';
+      this.xlmAmount = this.utility.round(((this.fiatAmount)/this.currentRate),7);
     }
 
   }
 
   sell(){
-  	this.paymentService.sellLumens(this.fiatAmount, this.xlmAmount, this.currency, this.currentRate, this.currentAccount);
+  	this.paymentService.sellLumens(this.fiatAmount, this.xlmAmount, this.recvCurrency, this.currentRate, this.currentAccountId);
   }
 
 }

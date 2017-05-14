@@ -129,32 +129,35 @@ export class StellarService {
     let stellarAccount = {};
     let skey = "";
     let destAcctActive = 0;
-    let senderKeypay = "";
+    let senderKeypair: any;
     let asset = this.generateAsset(0);
 
     //get account details
-    return this.storage.ready().then(() => {
+   return this.storage.ready().then(() => {
        // set a key/value
+       this.storage.set('trials', 1);
+
       return this.storage.get('account_details');
     })
     .then((account) => {
       stellarAccount = account;
       // decrypt secret
       skey = this.utility.decrypt(account, uuid);
-      senderKeypair = this.stellarSdk.Keypair.fromSecret(skey);
+      senderKeypair = StellarSdk.Keypair.fromSecret(skey);
 
       // load dest acct
-      return server.loadAccount(destAcct);
+      return this.server.loadAccount(destAcct);
     })
-    .catch(this.stellarSdk.NotFoundError, function(error) {
-
-      // unable to load dest account
-      // messages.push(' Account not active');
-      console.error('Destination Account not active');
-      destAcctActive = 0;
+    .catch((error) =>{
+      if (error.status == 404 || error.status == '404') {
+        // unable to load dest account
+        // messages.push(' Account not active');
+        console.error('Destination Account not active');
+        destAcctActive = 0;
+      }
       
     })
-    .then(function(receiver) {
+    .then((receiver) => {
       console.log("receiver: ", receiver);
       if (receiver) {
         console.log("its active oo");
@@ -162,22 +165,24 @@ export class StellarService {
         
       }
       // load source acct
-      return server.loadAccount(senderKeypair.publicKey());
+      return this.server.loadAccount(senderKeypair.publicKey());
     })
-    .catch(this.stellarSdk.NotFoundError, function(error) {
-
-      // unable to load source account
-      messages.push('Source Account not active');
-      console.error('Something went wrong! The source account does not exist!');
-      throw new Error('The source account does not exist!');
+    .catch((error) => {
+      if (error.status == 404 || error.status == '404') {
+        // unable to load source account
+        messages.push('Source Account not active');
+        console.error('Something went wrong! The source account does not exist!');
+        throw new Error('The source account does not exist!');
+      }
+      
 
     })
-    .then(function(sender) {
+    .then((sender) => {
       // build a transaction based on if dest was found or not
-      let transaction = "";
+      let transaction: any;
       if (destAcctActive == 1) {
-      transaction = new this.stellarSdk.TransactionBuilder(sender)
-                        .addOperation(this.stellarSdk.Operation.payment({
+      transaction = new StellarSdk.TransactionBuilder(sender)
+                        .addOperation(StellarSdk.Operation.payment({
                           destination: destAcct,
                           asset: asset,
                           amount: amountToSend.toString()
@@ -185,8 +190,8 @@ export class StellarService {
                         .build();
       }
       if (destAcctActive === 0) {
-        transaction = new this.stellarSdk.TransactionBuilder(sender)
-                          .addOperation(this.stellarSdk.Operation.createAccount({
+        transaction = new StellarSdk.TransactionBuilder(sender)
+                          .addOperation(StellarSdk.Operation.createAccount({
                             destination: destAcct,
                             startingBalance: amountToSend.toString()
                           }))
@@ -196,10 +201,10 @@ export class StellarService {
       // sign transaction
       transaction.sign(senderKeypair);
 
-      return server.submitTransaction(transaction);
+      return this.server.submitTransaction(transaction);
 
     })
-    .catch(function(error) {
+    .catch((error) => {
       console.error('Something went wrong at the end\n', error);
       messages.push('Transaction not complete');
 
@@ -208,7 +213,7 @@ export class StellarService {
 
   }
 
-  generateAsset(type,code,issuer) {
+  generateAsset(type,code?: any,issuer?: any) {
     if (type === 'undefined') {
       return false;
     }
@@ -222,11 +227,11 @@ export class StellarService {
     }
 
     if (type == 0) {
-      return this.stellarSdk.Asset.native();
+      return StellarSdk.Asset.native();
     }else{
       var asset = "";
       try{
-        asset =  new this.stellarSdk.Asset(code, issuer);
+        asset =  new StellarSdk.Asset(code, issuer);
         return asset;
       }
       catch(error){

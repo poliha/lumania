@@ -17,13 +17,13 @@
 	<ion-list margin-top>
 			<ion-item>
 				<ion-title>Sell</ion-title>
-				<small>You have XLM <b>{{balances[0].balance | number:'1.5-8'}}</b></small>
+				<small>You have XLM <b>{{currentBalance | number:'1.5-8'}}</b></small>
 			</ion-item>
       <ion-item>
       	
         <ion-input color="primary" type="number" [(ngModel)]="xlmAmount"
         (input)='calculateFiat($event.target.value)' placeholder="Amount in XLM"></ion-input>
-        <ion-select [(ngModel)]="currency">
+        <ion-select [(ngModel)]="sendCurrency">
        		<ion-option value="XLM">
 		        <ion-avatar item-left>
 		        	XLM
@@ -41,7 +41,7 @@
         <ion-input color="primary" type="number" [(ngModel)]="fiatAmount"
         (input)='calculateXLM($event.target.value)'  placeholder="Amount in {{currency}}"></ion-input>
         
-        <ion-select [(ngModel)]="currency" (ionChange)="calculateXLM">
+        <ion-select [(ngModel)]="recvCurrency" (ionChange)="calculateXLM()">
         	<ion-option *ngFor="let c of currencyList">{{c}}</ion-option>
 		    </ion-select>
       </ion-item>

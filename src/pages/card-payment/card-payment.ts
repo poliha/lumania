@@ -27,7 +27,9 @@ export class CardPayment {
     public lapi: Lapi, 	public paymentService: PaymentService, public loadingService: LoadingService,
     public config: Config) {
     this.currencyList = this.config.get('currencyList');
-    this.currency = this.config.get('defaultCurrency');
+    // this.currentRate = this.navParams.get('sellRate') || 1.00;
+    // this.recvCurreny = this.navParams.get('currency') || 'NGN';
+    this.currency = this.navParams.get('currency') || this.config.get('defaultCurrency');
     this.getRates();
   }
 
@@ -43,19 +45,18 @@ export class CardPayment {
   getRates(){
     this.loadingService.showLoader("Getting best rates...");
     this.lapi.getRates()
-      .map(res => res.json())
-      .subscribe((resp) => {
-          this.loadingService.hideLoader();
-          console.log(resp);
-          this.rates = resp.content.data;
-          // this.calculateBalances();
-        }, (err) => {
+      .then((resp)=>{
+        this.loadingService.hideLoader();
+        console.log(resp);
+        this.rates = resp;
+      })
+      .catch((err) => {
           this.loadingService.hideLoader();
           // to do add toast
-          console.log(err.json());
+          console.log("error",err.json());
   
-        });
-
+      });
+      
    //  this.utility.getRates()
    //    .subscribe((resp) => {
    //        console.log(resp);
@@ -85,65 +86,29 @@ export class CardPayment {
     console.log("calculateXLM");
 
     if (this.currency === 'USD') { 
-      this.lumens_amount = this.amount*this.rates.USDXLM;
+      this.lumens_amount = this.utility.round((this.amount*this.rates.USDXLM),7);
     } else {
       let target = this.currency+'XLM';
-      this.lumens_amount = (this.amount/this.rates[target])*this.rates.USDXLM;
+      this.lumens_amount = this.utility.round(( (this.amount/this.rates[target])*this.rates.USDXLM), 7);
     }
-
-    // switch (this.currency) {
-    //   case "NGN":
-    //     this.lumens_amount = (this.amount/this.rates.ngn)*this.rates.usd;
-    //     break;
-
-    //   case "USD":
-    //     this.lumens_amount = this.amount * this.rates.usd;
-    //     break;
-      
-    //   case "EUR":
-    //     this.lumens_amount = this.amount * this.rates.usd;
-    //     break;
-      
-    //   default:
-    //     // code...
-    //     break;
-    // }
-
-    
   }
 
   onInput(value){
-    console.log("calculateinput", value, this.currency, this.amount, this.lumens_amount);
+    
     // console.log("rates", this.rates);
 
     if (this.currency === 'USD') { 
-      this.lumens_amount = parseFloat(this.amount)*parseFloat(this.rates.USDXLM);
+      let temp = ( parseFloat(this.amount)*parseFloat(this.rates.USDXLM));
+      console.log("temp", temp);
+      this.lumens_amount = this.utility.round(temp,7);
+      console.log("calculateinput", value, this.currency, this.amount, this.lumens_amount, this.rates.USDXLM);
     } else {
       let target = this.currency+'XLM';
-      this.lumens_amount = (parseFloat(this.amount)/parseFloat(this.rates[target]))*parseFloat(this.rates.USDXLM);
+      let temp = (parseFloat(this.amount)/parseFloat(this.rates[target]))*parseFloat(this.rates.USDXLM);
+      console.log("temp", temp);
+      this.lumens_amount = this.utility.round(temp, 7);
+      console.log("calculateinput", value, this.currency, this.amount, this.lumens_amount, this.rates.USDXLM, this.rates[target]);
     }
-
-    // switch (this.currency) {
-    //   case "NGN":
-    //   console.log("ngn");
-    //     this.lumens_amount = (parseFloat(this.amount)/parseFloat(this.rates.ngn))*parseFloat(this.rates.usd);
-    //     break;
-
-    //   case "USD":
-    //   console.log("usd");
-    //     this.lumens_amount = parseFloat(this.amount) * parseFloat(this.rates.usd);
-    //     break;
-      
-    //   case "EUR":
-    //   console.log("eur");
-    //     this.lumens_amount = parseFloat(this.amount) * parseFloat(this.rates.usd);
-    //     break;
-      
-    //   default:
-    //     // code...
-    //     break;
-    // }
-
   }
 
 

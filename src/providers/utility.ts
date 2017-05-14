@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
 import forge from 'node-forge';
+import math from 'mathjs';
 
 
 /*
@@ -33,6 +34,11 @@ export class Utility {
     }
     console.log("random text: ",text);
     return text;
+  }
+
+  round(value, decimals) {
+    return math.round(value, decimals); 
+    // return Number(Math.round(value+'e'+decimals)+'e-'+decimals);
   }
 
   getTxRef(){

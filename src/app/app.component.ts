@@ -5,7 +5,7 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 
 import { Welcome } from '../pages/welcome/welcome';
 import { TranslateService } from 'ng2-translate/ng2-translate';
-
+import { Lapi } from '../providers/lapi';
 
 @Component({
   templateUrl: 'app.html'
@@ -13,7 +13,8 @@ import { TranslateService } from 'ng2-translate/ng2-translate';
 export class Lumania {
   rootPage:any = Welcome;
 
-  constructor(translate: TranslateService, platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen) {
+  constructor(translate: TranslateService, platform: Platform, 
+    statusBar: StatusBar, splashScreen: SplashScreen, public lapi: Lapi) {
     // Set the default language for translation strings, and the current language.
     translate.setDefaultLang('en');
     translate.use('en')
@@ -24,5 +25,21 @@ export class Lumania {
       statusBar.styleDefault();
       splashScreen.hide();
     });
+
+    this.lapi.getRates()
+        .then((resp)=>{
+        // this.loadingService.hideLoader();
+        console.log(resp);
+        // this.rates = resp;
+        // this.getBalance();
+
+        // this.calculateBalances();
+      })
+      .catch((err) => {
+          // this.loadingService.hideLoader();
+          // to do add toast
+          console.log("error",err);
+  
+      });
   }
 }

@@ -7,12 +7,34 @@
 <ion-header>
 
   <ion-navbar>
-    <ion-title>Rates</ion-title>
+    <ion-title>XLM Rates</ion-title>
   </ion-navbar>
 
 </ion-header>
 
 
-<ion-content padding>
+<ion-content>
+
+	<table>
+		<thead>
+			<tr>
+				<th></th>
+				<th>Buy</th>
+				<th>Sell</th>
+			</tr>
+		</thead>
+		<tr *ngFor="let r of ratesObj">
+			<td>
+				<button ion-button item-left color="dark" clear>{{ r.currency }}</button>
+			</td>
+			<td>
+				<button ion-button (click)="buyPage(r.currency,r.buy)" color="primary" clear>{{ r.buy | number:'1.5-8' }}</button>
+			</td>
+			<td>
+				<button ion-button (click)="sellPage(r.currency,r.sell)" color="secondary" clear>{{ r.sell | number:'1.5-8' }}</button>
+			</td>
+		</tr>
+	</table>
+
 
 </ion-content>

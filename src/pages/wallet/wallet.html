@@ -14,10 +14,10 @@
 	      <button ion-button color="primary" (click)="showPaymentPage()" block>{{ 'BUY_BUTTON' | translate }}</button>
 	    </ion-col>
 	    <ion-col>
-	      <button ion-button color="primary" block>{{ 'SEND_BUTTON' | translate }}</button>
+	      <button ion-button color="primary" (click)="sendPage()" block>{{ 'SEND_BUTTON' | translate }}</button>
 	    </ion-col>
 	    <ion-col>
-	      <button ion-button color="primary" block>{{ 'SELL_BUTTON' | translate }}</button>
+	      <button ion-button color="primary"(click)="sellPage()" block>{{ 'SELL_BUTTON' | translate }}</button>
 	    </ion-col>
 	  </ion-row>
 	</ion-grid>
