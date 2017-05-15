@@ -7,6 +7,7 @@ import { LoadingService } from '../../providers/loading-service';
 import { Utility } from '../../providers/utility';
 import { StellarService } from '../../providers/stellar-sdk';
 import { Sell } from '../sell/sell';
+import { Storage } from '@ionic/storage';
 
 
 /**
@@ -24,7 +25,7 @@ export class Rates {
 	rates: any = {};
 	ratesObj: any = [];
   constructor(public navCtrl: NavController, public navParams: NavParams, 
-    public stellarService: StellarService, public utility: Utility,
+    public stellarService: StellarService, public utility: Utility, public storage: Storage,
   	public authService: AuthService, public lapi: Lapi, public loadingService: LoadingService) {
   }
 
@@ -57,14 +58,20 @@ export class Rates {
         .then((resp)=>{
         this.loadingService.hideLoader();
         console.log(resp);
-        this.rates = resp;
-        this.processRates();
+
+        // get rates from local store
+        return this.storage.get('rates');
+        
       })
       .catch((err) => {
           this.loadingService.hideLoader();
           // to do add toast
           console.log("error",err);
 
+      })
+      .then((val) => {
+          this.rates = val;
+          this.processRates();
       });
   }
 

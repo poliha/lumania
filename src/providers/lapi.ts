@@ -18,7 +18,8 @@ import { Storage } from '@ionic/storage';
 */
 @Injectable()
 export class Lapi {
-	url: string = 'http://localhost:8888/'
+	// url: string = 'http://localhost:8888/';
+  url: string = 'http://lumania.tech:8888';
 
   constructor(public http: Http, public authService: AuthService, public api: Api,
     public storage: Storage) {
@@ -44,6 +45,16 @@ export class Lapi {
     return seq;
   }
 
+  saveWaveTx(txInfo: any){
+    // add authorization header with jwt token
+    let headers = new Headers({ 'Authorization': 'Bearer ' + this.authService.getLapiToken() });
+    let options = new RequestOptions({ headers: headers });
+
+    let seq = this.api.post('transaction/wave/save', txInfo, options);
+    seq.map(res => res.json())
+        .catch((error:any) => Observable.throw(error.json().error || 'Server error')); //...errors if any
+    return seq;
+  }
   saveAccount(txInfo: any){
     // add authorization header with jwt token
     let headers = new Headers({ 'Authorization': 'Bearer ' + this.authService.getLapiToken() });
@@ -107,7 +118,7 @@ export class Lapi {
         console.log(timestampDiff);
       }
 
-      if (!value || timestampDiff > 60000) { 
+      if (!value || timestampDiff > 600000) { 
         let seq = this.api.get('rates');
         seq
         .map(res => res.json())

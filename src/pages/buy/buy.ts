@@ -5,45 +5,35 @@ import { Utility } from '../../providers/utility';
 import { Lapi } from '../../providers/lapi';
 import { LoadingService } from '../../providers/loading-service';
 import { Storage } from '@ionic/storage';
-/**
- * Generated class for the CardPayment page.
- *
- * See http://ionicframework.com/docs/components/#navigation for more info
- * on Ionic pages and navigation.
- */
+
+
 @IonicPage()
 @Component({
-  selector: 'page-card-payment',
-  templateUrl: 'card-payment.html',
+  selector: 'page-buy',
+  templateUrl: 'buy.html',
 })
-export class CardPayment {
+export class Buy {
 	amount: any = 0.00;
 	currency: string;
   currencyList = [];
   rates: any = {};
   lumens_amount = 0.00;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public storage: Storage,
+  constructor(public navCtrl: NavController, public navParams: NavParams,public storage: Storage,
     public utility: Utility,  public lapi: Lapi, 	public paymentService: PaymentService, 
     public loadingService: LoadingService,  public config: Config) {
-    this.currencyList = this.config.get('currencyList');
-    // this.currentRate = this.navParams.get('sellRate') || 1.00;
-    // this.recvCurreny = this.navParams.get('currency') || 'NGN';
-    this.currency = this.navParams.get('currency') || this.config.get('defaultCurrency');
-    // this.getRates();
   }
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad CardPayment');
-    // get rates and store
+    console.log('ionViewDidLoad Buy');
   }
-  ionViewWillEnter(){
+	ionViewWillEnter(){
     console.log('getting balance');
     this.getRates();
   }
 
   pay(){
-  	this.paymentService.raveCheckout(this.amount, this.currency, this.lumens_amount);
+  	// this.paymentService.waveCheckout(this.amount, this.currency, this.lumens_amount);
   }
 
   getRates(){

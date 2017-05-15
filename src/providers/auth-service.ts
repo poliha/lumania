@@ -169,23 +169,14 @@ export class AuthService {
     }
   }
 
-  verifyEmail(code){
-  	let req: any;
+  verifyEmail(code)
+  {
+
   	if (code === this.user.get('email_auth_code', 1)) {
-			this.user.set('email_verified', true);
-			req = this.user.save().then(() => {
-
-    }, (err) => {
-    	// set local copy to false
-    	this.user.set('email_verified', false);
-    });
-
-			return req;
-
-  	} else {
-  		return req;
-  	}
-
+      return true;
+    }else{
+      return false;
+    }
 
   }
 

@@ -7,6 +7,7 @@ import { LoadingService } from '../../providers/loading-service';
 import { Utility } from '../../providers/utility';
 import { StellarService } from '../../providers/stellar-sdk';
 import { AlertService } from '../../providers/alert-service';
+import { Storage } from '@ionic/storage';
 
 /**
  * Generated class for the Sell page.
@@ -33,7 +34,7 @@ export class Sell {
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public config: Config,
     public loadingService: LoadingService, public utility: Utility,	public lapi: Lapi,
-    public paymentService: PaymentService,public alertService: AlertService,
+    public paymentService: PaymentService,public alertService: AlertService, public storage: Storage,
   	public stellarService: StellarService, public authService: AuthService)
   {
     this.currencyList = this.config.get('currencyList');
@@ -51,7 +52,8 @@ export class Sell {
   ionViewWillEnter(){
     console.log('getting balance');
 
-    this.getBalance();
+    // this.getBalance();
+    this.getRates();
 
 
   }
@@ -64,7 +66,7 @@ export class Sell {
 
           this.balances = account.balances;
           this.currentBalance = this.balances[0].balance;
-          this.getRates();
+          // this.getRates();
         })
         .catch((error)=>{
 
@@ -85,8 +87,8 @@ export class Sell {
       .then((resp)=>{
         this.loadingService.hideLoader();
         console.log(resp);
-        this.rates = resp;
-        this.getCurrentRate();
+        // this.rates = resp;
+        return this.storage.get('rates');
 
       })
       .catch((err) => {
@@ -94,21 +96,12 @@ export class Sell {
           // to do add toast
           console.log("error",err.json());
 
+      })
+      .then((val) => {
+          this.rates = val;
+          this.getCurrentRate();
+          this.getBalance();
       });
-
-      // .map(res => res.json())
-      // .subscribe((resp) => {
-      //     this.loadingService.hideLoader();
-      //     console.log(resp);
-
-      //     this.rates = resp.content.data;
-      //     this.getCurrentRate();
-      //     // this.calculateBalances();
-      //   }, (err) => {
-      //     this.loadingService.hideLoader();
-      //     // to do add toast
-      //     console.log(err.json());
-      //   });
 
   }
 

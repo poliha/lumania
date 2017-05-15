@@ -26,6 +26,7 @@ import { PaymentMethod } from '../pages/payment-method/payment-method';
 import { CardPayment } from '../pages/card-payment/card-payment';
 import { Sell } from '../pages/sell/sell';
 import { Send } from '../pages/send/send';
+import { Buy } from '../pages/buy/buy';
 
 
 import { AuthService } from '../providers/auth-service';
@@ -72,7 +73,8 @@ let pages = [
     PaymentMethod,
     CardPayment,
     Sell,
-    Send
+    Send,
+    Buy
   ];
 
 let configOptions = {

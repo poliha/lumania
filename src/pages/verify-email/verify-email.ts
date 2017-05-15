@@ -40,17 +40,18 @@ export class VerifyEmail {
 
   verifyEmailCode(){
   	let resp = this.authService.verifyEmail(this.auth_code);
-  	if (resp) { 
-  		//check user obj
-  		if (this.authService.user.get('email_verified', false)) {
-  			// toast success
-  			this.showToast("Email verified successfully");
-  			// navigate to dashboard
-  			this.navCtrl.push(Dashboard);
-  		}else{
-  			// toast error
-  			this.showToast("Verification failed");
-  		}
+  	if (resp) {
+  		// 
+      this.authService.saveData('email_verified', true)
+      .then(()=>{
+        this.showToast("Email verified successfully");
+        // navigate to dashboard
+        this.navCtrl.push(Dashboard);
+      })
+      .catch((err)=>{
+        console.log(err);
+        this.showToast("Verification failed");
+      });
 
   	} else {
   		// toast error

@@ -7,6 +7,7 @@ import { StellarService } from './stellar-sdk';
 import { LoadingService } from './loading-service';
 import { AlertService } from './alert-service';
 import { Lapi } from './lapi';
+// import { Dashboard } from '../pages/dashboard/dashboard';
 // import { initRavePay } from 'cordova-rave';
 declare var initRavePay;
 
@@ -70,6 +71,62 @@ export class PaymentService {
     
 
   }
+
+  // waveCheckout(payObj, cardObj){
+  //   // save transaction 
+  //   // buid request to  be sent towave api with token
+  //   // wait for redirect and verification
+  //   // get success message
+  //   let txRef = this.utility.getTxRef();
+  //   let options = {
+  //     "txref": txRef,
+  //     "firstname": payObj.firstname,
+  //     "lastname": payObj.lastname,
+  //     "phonenumber": payObj.phonenumber,
+  //     "email": this.authService.user.details.email,
+  //     "recipient": "wallet",
+  //     "card_no": payObj.card_no,
+  //     "cvv": payObj.cvv,
+  //     "expiry_year": payObj.expiry_year,
+  //     "expiry_month": payObj.expiry_month,
+  //     "apiKey": "",
+  //     "amount": payObj.amount,
+  //     "fee": "",
+  //     "redirecturl": "",
+  //     "medium": "mobile",
+  //     "token": this.authService.getLapiToken(),
+  //     "lumens_amount": lumens_amount,
+  //     "uuid":  this.authService.getUuid()
+  //   };
+
+  //   // let saveObj = {
+  //   //   "txRef": txRef,
+  //   //   "amount": amount,
+  //   //   "currency": currency,
+  //   //   "token": this.authService.getLapiToken(),
+  //   //   "lumens_amount": lumens_amount,
+  //   //   "uuid":  this.authService.getUuid()
+  //   // };
+
+  //   // Todo save txref/amount/lumens_amount in  Lapi here
+  //   this.lapi.saveWaveTx(options)
+  //           .map(res => res.json())
+  //           .subscribe((resp) => {
+  //             console.log(resp);
+
+  //             // get payment from user
+  //             return initRavePay(options);
+
+  //           }, (err) => {
+  //             // to do add toast
+  //             console.log(err.json());
+  //             let errorObj = err.json();
+  //             this.alertService.basicAlert("Error", errorObj.content.message[0] ,"Ok");
+
+  //           });
+    
+
+  // }
 
   closeRave(){
   	// 
