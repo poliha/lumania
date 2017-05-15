@@ -3,6 +3,7 @@
   "BACK_BUTTON_TEXT" : "Back",
 
   "NAME": "Name",
+  "SURNAME": "Surname",
   "EMAIL": "Email",
   "USERNAME": "Username",
   "PASSWORD": "Password",

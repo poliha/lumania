@@ -27,6 +27,8 @@ import { CardPayment } from '../pages/card-payment/card-payment';
 import { Sell } from '../pages/sell/sell';
 import { Send } from '../pages/send/send';
 import { Buy } from '../pages/buy/buy';
+import { AccountDetails } from '../pages/account-details/account-details';
+import { LinkAccount } from '../pages/link-account/link-account';
 
 
 import { AuthService } from '../providers/auth-service';
@@ -74,7 +76,9 @@ let pages = [
     CardPayment,
     Sell,
     Send,
-    Buy
+    Buy,
+    LinkAccount,
+    AccountDetails
   ];
 
 let configOptions = {

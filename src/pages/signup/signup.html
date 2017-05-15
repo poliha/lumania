@@ -25,7 +25,12 @@
 
       <ion-item>
         <ion-label fixed>{{ 'NAME' | translate }}</ion-label>
-        <ion-input type="text" [(ngModel)]="account.name" name="name"></ion-input>
+        <ion-input type="text" [(ngModel)]="account.firstname" name="firstname"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label fixed>{{ 'SURNAME' | translate }}</ion-label>
+        <ion-input type="text" [(ngModel)]="account.surname" name="surname"></ion-input>
       </ion-item>
 
       <ion-item>

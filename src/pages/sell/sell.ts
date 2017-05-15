@@ -73,10 +73,10 @@ export class Sell {
           console.log(error);
         })
     } else {
-      this.balances.push({
+       this.balances = [{
         "balance": "0.00",
         "asset_type": "native"
-      })
+      }];
 
     }
   }

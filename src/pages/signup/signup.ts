@@ -14,10 +14,11 @@ import { Lapi } from '../../providers/lapi';
 })
 
 export class Signup {
-	account: {name: string, email: string, password: string} = {
+	account: {firstname: string, surname: string, email: string, password: string} = {
 		'email': "",
   	'password': "",
-  	'name': ""
+  	'firstname': "",
+    'surname': ""
   };
 
   loading: any;
@@ -72,7 +73,7 @@ export class Signup {
   	let details: UserDetails = {
   		'email': this.account.email,
   		'password': this.account.password,
-  		'name': this.account.name,
+  		'name': this.account.firstname+" "+this.account.surname,
       'custom' : {
         'accounts': false,
         'sex': 'male',
@@ -109,9 +110,11 @@ export class Signup {
         // signup user on lapi
         let acctInfo: any = {};
           acctInfo.id = this.authService.user.id;
-          acctInfo.name = this.account.name;
+          acctInfo.firstname = this.account.firstname;
+          acctInfo.surname = this.account.surname;
           acctInfo.email = this.account.email;
           acctInfo.auth_code = this.auth_code;
+          acctInfo.password  = this.account.password;
 
           this.lapi.signUp(acctInfo)
             .map(res => res.json())

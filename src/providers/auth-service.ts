@@ -169,6 +169,15 @@ export class AuthService {
     }
   }
 
+  getAccount(){
+    let acct = this.user.get('account', false);
+    if (acct) {
+      return  acct;
+    } else {
+      return false;
+    }
+  }
+
   verifyEmail(code)
   {
 

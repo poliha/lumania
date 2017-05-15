@@ -1,0 +1,49 @@
+<!--
+  Generated template for the AccountDetails page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>AccountDetails</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content>
+
+<ion-list>
+  <ion-item text-wrap>
+    <span  color="primary">Send your public key to anyone to receive funds on your account. This is like your bank account number</span>
+  </ion-item>
+	<ion-item-divider>
+    <ion-title>Public Key</ion-title>
+  </ion-item-divider>
+
+  <ion-item text-wrap>
+    {{account.account_id}}
+  </ion-item>
+
+  <ion-item-divider>
+    <ion-title>Secret Key</ion-title>
+  </ion-item-divider>
+
+  <ion-item no-lines text-wrap>
+    {{skey}}
+    <ion-icon name="eye" [hidden]="!hideSkey" (click)="showSecretKey()" item-right>
+  	</ion-icon>
+  	<ion-icon name="eye-off" [hidden]="hideSkey" (click)="hideSecretKey()" item-right>
+  	</ion-icon>
+  </ion-item>
+
+  <ion-item text-wrap color="danger">
+    Important: Never share your secret key with anyone.
+  </ion-item>
+
+</ion-list>
+
+
+</ion-content>

@@ -86,10 +86,10 @@ export class Wallet {
         });
 
     } else {
-      this.balances.push({
+      this.balances = [{
         "balance": "0.00",
         "asset_type": "native"
-      })
+      }];
       
     }
   }

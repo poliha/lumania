@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { CardPayment } from '../card-payment/card-payment';
+import { AccountDetails } from '../account-details/account-details';
+import { LinkAccount } from '../link-account/link-account';
 
 /**
  * Generated class for the PaymentMethod page.
@@ -28,15 +30,11 @@ export class PaymentMethod {
   			this.navCtrl.push(CardPayment);
   			break;
   		case 2:
-  			// code...
+  			this.navCtrl.push(LinkAccount);
   			break;
   		case 3:
-  			// code...
+  			this.navCtrl.push(AccountDetails);
   			break;
-  		case 4:
-  			// code...
-  			break;
-  		
   		default:
   			// code...
   			break;
