@@ -34,6 +34,17 @@ export class Lapi {
     return seq;
   }
 
+  saveProfileData(txInfo: any){
+    // add authorization header with jwt token
+    let headers = new Headers({ 'Authorization': 'Bearer ' + this.authService.getLapiToken() });
+    let options = new RequestOptions({ headers: headers });
+
+    let seq = this.api.post('save/profile', txInfo, options);
+    seq.map(res => res.json())
+        .catch((error:any) => Observable.throw(error.json().error || 'Server error')); //...errors if any
+    return seq;
+  }
+
   saveTx(txInfo: any){
     // add authorization header with jwt token
     let headers = new Headers({ 'Authorization': 'Bearer ' + this.authService.getLapiToken() });
@@ -44,6 +55,31 @@ export class Lapi {
         .catch((error:any) => Observable.throw(error.json().error || 'Server error')); //...errors if any
     return seq;
   }
+
+
+  saveEmailTx(txInfo: any){
+    // add authorization header with jwt token
+    let headers = new Headers({ 'Authorization': 'Bearer ' + this.authService.getLapiToken() });
+    let options = new RequestOptions({ headers: headers });
+
+    let seq = this.api.post('transaction/save_email', txInfo, options);
+    seq.map(res => res.json())
+        .catch((error:any) => Observable.throw(error.json().error || 'Server error')); //...errors if any
+    return seq;
+  }
+
+
+  contactForm(txInfo: any){
+    // add authorization header with jwt token
+    let headers = new Headers({ 'Authorization': 'Bearer ' + this.authService.getLapiToken() });
+    let options = new RequestOptions({ headers: headers });
+
+    let seq = this.api.post('mail/support', txInfo, options);
+    seq.map(res => res.json())
+        .catch((error:any) => Observable.throw(error.json().error || 'Server error')); //...errors if any
+    return seq;
+  }
+
 
   saveWaveTx(txInfo: any){
     // add authorization header with jwt token
@@ -95,6 +131,117 @@ export class Lapi {
 
     return seq;
   }
+
+  resendAuthCode(opts: any){
+    // add authorization header with jwt token
+    let headers = new Headers({ 'Authorization': 'Bearer ' + this.authService.getLapiToken() });
+    let options = new RequestOptions({ headers: headers });
+
+    let seq = this.api.post('mail/authcode', opts, options);
+    seq.map(res => res.json())
+        .catch((error:any) => Observable.throw(error.json().error || 'Server error')); //...errors if any
+    return seq;
+  }
+
+  verifyPin(opts: any){
+    // add authorization header with jwt token
+    let headers = new Headers({ 'Authorization': 'Bearer ' + this.authService.getLapiToken() });
+    let options = new RequestOptions({ headers: headers });
+
+    let seq = this.api.post('verify/pin', opts, options);
+    seq.map(res => res.json())
+        .catch((error:any) => Observable.throw(error.json().error || 'Server error')); //...errors if any
+    return seq;
+  }
+  changePassword(opts: any){
+    // add authorization header with jwt token
+    let headers = new Headers({ 'Authorization': 'Bearer ' + this.authService.getLapiToken() });
+    let options = new RequestOptions({ headers: headers });
+
+    let seq = this.api.post('user/changepassword', opts, options);
+    seq.map(res => res.json())
+        .catch((error:any) => Observable.throw(error.json().error || 'Server error')); //...errors if any
+    return seq;
+  }
+
+  changePin(opts: any){
+    // add authorization header with jwt token
+    let headers = new Headers({ 'Authorization': 'Bearer ' + this.authService.getLapiToken() });
+    let options = new RequestOptions({ headers: headers });
+
+    let seq = this.api.post('user/changepin', opts, options);
+    seq.map(res => res.json())
+        .catch((error:any) => Observable.throw(error.json().error || 'Server error')); //...errors if any
+    return seq;
+  }
+
+  setPin(opts: any){
+    // add authorization header with jwt token
+    let headers = new Headers({ 'Authorization': 'Bearer ' + this.authService.getLapiToken() });
+    let options = new RequestOptions({ headers: headers });
+
+    let seq = this.api.post('user/setpin', opts, options);
+    seq.map(res => res.json())
+        .catch((error:any) => Observable.throw(error.json().error || 'Server error')); //...errors if any
+    return seq;
+  }
+
+  recoverAccount(opts: any){
+    // add authorization header with jwt token
+    let headers = new Headers({ 'Authorization': 'Bearer ' + this.authService.getLapiToken() });
+    let options = new RequestOptions({ headers: headers });
+
+    let seq = this.api.post('account/recover', opts, options);
+    seq.map(res => res.json())
+        .catch((error:any) => Observable.throw(error.json().error || 'Server error')); //...errors if any
+    return seq;
+  }
+
+  getBanks(opts: any){
+    // add authorization header with jwt token
+    let headers = new Headers({ 'Authorization': 'Bearer ' + this.authService.getLapiToken() });
+    let options = new RequestOptions({ headers: headers });
+
+    let seq = this.api.post('banks', opts, options);
+    seq.map(res => res.json())
+        .catch((error:any) => Observable.throw(error.json().error || 'Server error')); //...errors if any
+    return seq;
+  }
+
+  getMasterAccount(opts?: any){
+    // add authorization header with jwt token
+    let headers = new Headers({ 'Authorization': 'Bearer ' + this.authService.getLapiToken() });
+    let options = new RequestOptions({ headers: headers });
+
+    let seq = this.api.post('tanker', opts, options);
+    seq.map(res => res.json())
+        .catch((error:any) => Observable.throw(error.json().error || 'Server error')); //...errors if any
+    return seq;
+  }
+
+
+  verifyBankAccount(opts: any){
+    // add authorization header with jwt token
+    let headers = new Headers({ 'Authorization': 'Bearer ' + this.authService.getLapiToken() });
+    let options = new RequestOptions({ headers: headers });
+
+    let seq = this.api.post('verify/bank', opts, options);
+    seq.map(res => res.json())
+        .catch((error:any) => Observable.throw(error.json().error || 'Server error')); //...errors if any
+    return seq;
+  }
+
+  getNews(opts: any){
+    // add authorization header with jwt token
+    let headers = new Headers({ 'Authorization': 'Bearer ' + this.authService.getLapiToken() });
+    let options = new RequestOptions({ headers: headers });
+
+    let seq = this.api.post('news', opts, options);
+    seq.map(res => res.json())
+        .catch((error:any) => Observable.throw(error.json().error || 'Server error')); //...errors if any
+    return seq;
+  }
+
 
   getRates(){
     // get from localstorage

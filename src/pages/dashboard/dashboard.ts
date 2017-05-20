@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, App } from 'ionic-angular';
 import { AuthService } from '../../providers/auth-service';
 import { Welcome } from '../welcome/welcome';
 import { Rates } from '../rates/rates';
@@ -28,14 +28,16 @@ export class Dashboard {
   tab4Root = News;
   tab5Root = Profile;
   
-  constructor(public navCtrl: NavController, public navParams: NavParams, public authService: AuthService) {
+  constructor(private appCtrl: App, public navCtrl: NavController, public navParams: NavParams, 
+    public authService: AuthService) {
 
-    if (this.authService.isLoggedIn()) { 
-      console.log("user: ",this.authService.user);
-    } else {
-      console.log("nt auth");
-      this.navCtrl.push(Welcome);
-    }
+    // if (this.authService.isLoggedIn()) { 
+    //   console.log("user: ",this.authService.user);
+    // } else {
+    //   console.log("nt auth");
+    //   this.authService.logout();
+    //   this.appCtrl.getRootNav().setRoot(Welcome);
+    // }
   }
 
   ionViewCanEnter(){
@@ -46,11 +48,6 @@ export class Dashboard {
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad Dashboard');
-    if (this.authService.isLoggedIn()) { 
-    	console.log("user: ",this.authService.user);
-    } else {
-    	console.log("not logged in");
-    }
   }
 
 }

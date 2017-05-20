@@ -3,6 +3,7 @@
   "BACK_BUTTON_TEXT" : "Back",
 
   "NAME": "Name",
+  "FIRSTNAME": "Firstname",
   "SURNAME": "Surname",
   "EMAIL": "Email",
   "USERNAME": "Username",
@@ -70,6 +71,7 @@
   "RESET_BUTTON": "Reset Password",
   "AUTH_CODE": "Auth Code",
   "CONFIRM_PASSWORD": "Confirm Password",
+  "OLD_PASSWORD": "Old Password",
   "SAVE_BUTTON": "Save",
   "BUY_BUTTON": "BUY",
   "SEND_BUTTON": "SEND",

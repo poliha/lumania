@@ -27,27 +27,31 @@
       </ion-avatar>
         {{authService.user.details.name}}
     </button> 
-    <button ion-item (click)="itemSelected(item)">
+    <!-- <button ion-item (click)="itemSelected()">
          <ion-icon name="cog" item-left></ion-icon>
         Settings
-    </button>
-    <button ion-item (click)="itemSelected(item)">
+    </button> -->
+    <button ion-item (click)="changePassword()">
          <ion-icon name="key" item-left></ion-icon>
         Change Password
     </button>
-    <button ion-item (click)="itemSelected(item)">
+    <button ion-item (click)="changePin()">
          <ion-icon name="lock" item-left></ion-icon>
         Change PIN
     </button>
-    <button ion-item (click)="itemSelected(item)">
+    <button ion-item (click)="bankDetails()">
          <ion-icon name="lock" item-left></ion-icon>
         Bank Account Details
     </button>
-    <button ion-item (click)="itemSelected(item)">
+    <button ion-item (click)="verifyAccount()">
          <ion-icon name="lock" item-left></ion-icon>
         Account Verification
     </button>
-    <button ion-item (click)="itemSelected(item)">
+    <button ion-item (click)="accountRecovery()">
+         <ion-icon name="lock" item-left></ion-icon>
+        Account Recovery
+    </button>
+    <button ion-item (click)="supportChannels()">
         <ion-icon name="call" item-left></ion-icon>
         Help &amp; Support
     </button>  

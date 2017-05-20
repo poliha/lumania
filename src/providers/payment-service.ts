@@ -26,13 +26,13 @@ export class PaymentService {
   raveUrl = 'http://flw-pms-dev.eu-west-1.elasticbeanstalk.com/flwv3-pug/getpaidx/api/verify';
   // var self = this;
   constructor(public http: Http, public authService: AuthService, public lapi: Lapi,
-    public alertService: AlertService, public loadingService: LoadingService, 
+    public alertService: AlertService, public loadingService: LoadingService,
     public utility: Utility, public stellarSdk: StellarService) {
     console.log('Hello PaymentService Provider');
     // self = this;
   }
 
-  raveCheckout(amount, currency, lumens_amount){
+  raveCheckout(amount, currency, lumens_amount, pin){
   	let txRef = this.utility.getTxRef();
   	let options = {
   		"txref": txRef,
@@ -47,9 +47,11 @@ export class PaymentService {
       "txRef": txRef,
       "amount": amount,
       "currency": currency,
+      "pin": pin,
       "token": this.authService.getLapiToken(),
       "lumens_amount": lumens_amount,
-      "uuid":  this.authService.getUuid()
+      "uuid":  this.authService.getUuid(),
+      "txType": 1
     };
 
     // Todo save txref/amount/lumens_amount in  Lapi here
@@ -65,71 +67,17 @@ export class PaymentService {
               // to do add toast
               console.log(err.json());
               let errorObj = err.json();
-              this.alertService.basicAlert("Error", errorObj.content.message[0] ,"Ok");
+              this.alertService.basicAlert("Error", errorObj.content.message.join('. ') ,"Ok");
 
             });
-    
+
 
   }
 
-  // waveCheckout(payObj, cardObj){
-  //   // save transaction 
-  //   // buid request to  be sent towave api with token
-  //   // wait for redirect and verification
-  //   // get success message
-  //   let txRef = this.utility.getTxRef();
-  //   let options = {
-  //     "txref": txRef,
-  //     "firstname": payObj.firstname,
-  //     "lastname": payObj.lastname,
-  //     "phonenumber": payObj.phonenumber,
-  //     "email": this.authService.user.details.email,
-  //     "recipient": "wallet",
-  //     "card_no": payObj.card_no,
-  //     "cvv": payObj.cvv,
-  //     "expiry_year": payObj.expiry_year,
-  //     "expiry_month": payObj.expiry_month,
-  //     "apiKey": "",
-  //     "amount": payObj.amount,
-  //     "fee": "",
-  //     "redirecturl": "",
-  //     "medium": "mobile",
-  //     "token": this.authService.getLapiToken(),
-  //     "lumens_amount": lumens_amount,
-  //     "uuid":  this.authService.getUuid()
-  //   };
 
-  //   // let saveObj = {
-  //   //   "txRef": txRef,
-  //   //   "amount": amount,
-  //   //   "currency": currency,
-  //   //   "token": this.authService.getLapiToken(),
-  //   //   "lumens_amount": lumens_amount,
-  //   //   "uuid":  this.authService.getUuid()
-  //   // };
-
-  //   // Todo save txref/amount/lumens_amount in  Lapi here
-  //   this.lapi.saveWaveTx(options)
-  //           .map(res => res.json())
-  //           .subscribe((resp) => {
-  //             console.log(resp);
-
-  //             // get payment from user
-  //             return initRavePay(options);
-
-  //           }, (err) => {
-  //             // to do add toast
-  //             console.log(err.json());
-  //             let errorObj = err.json();
-  //             this.alertService.basicAlert("Error", errorObj.content.message[0] ,"Ok");
-
-  //           });
-    
-
-  // }
 
   closeRave(){
-  	// 
+  	//
   	console.log("rave closed");
   }
 
@@ -149,52 +97,26 @@ export class PaymentService {
         return this.requestLumens(response.tx.txRef,response.tx.flwRef, account.account_id, response.tx.amount);
       });
 
-      // move verification to server
-      // request lumens there
-
-      //verify payment from flutterwave
-      // let body = {
-      //   "SECKEY": this.raveSecretKey,
-      //   "flw_ref": 'response.tx.flwRef'
-      // }
-
-      // this.http.post(this.raveUrl, body).share()
-      //     .map(res => res.json())
-      //     .subscribe((resp) => {
-      //         console.log(resp);
-      //         this.loadingService.hideLoader();
-      //         // request Lumens from Lumania
-      //         // return this.requestLumens(txref, flwRef)
-
-
-      //       }, (err) => {
-
-      //         console.log(err);
-      //         this.loadingService.hideLoader();
-      //         this.loadingService.showLoader(err.json().status+": "+err.json().message, 5000);
-
-      //         // alert(err);
-
-      //       });
 
     } else {
-      if (response.respmsg) { 
+      if (response.respmsg) {
         this.loadingService.showLoader(response.respmsg, 5000);
       } else {
         this.loadingService.showLoader(response.data.data.message, 5000);
       }
-      
+
     }
 
   }
-  
+
   requestLumens(txRef, flwRef, accountId, amount){
     let body = {
         "txRef": txRef,
         "flwRef": flwRef,
         "token": this.authService.getLapiToken(),
         "uuid":  this.authService.getUuid(),
-        "accountId": accountId
+        "accountId": accountId,
+        "email": this.authService.user.details.email
       }
     // pass account to lapi for crediting
     this.lapi.creditLumensAccount(body)
@@ -213,13 +135,23 @@ export class PaymentService {
 
   }
 
-  sellLumens(fiatAmount, xlmAmount, currency, currentRate, currentAccount){
+  sellLumens(fiatAmount, xlmAmount, currency, currentRate, currentAccount, pin){
+
+    // verify if currency is supported and save tx in lapi
+    // if it is supported return lumania account id and memotext
+    // send lumania amounts in lumens with memo
+    // connect to lapi with tx hash
+    // if tx hash is correct and tx complete  withdraw funds 
+    // return success or failure or pending
+
+
 
     this.loadingService.showLoader("Processing...");
     let body = {
         "fiatAmount": fiatAmount,
         "xlmAmount": xlmAmount,
         "currency": currency,
+        "pin": pin,
         "currentRate": currentRate,
         "accountId": currentAccount,
         "token": this.authService.getLapiToken(),
@@ -231,7 +163,7 @@ export class PaymentService {
 
     // send lumens to Lumania
     this.stellarSdk.sendLumens(currentAccount, xlmAmount).then((result)=>{
-        
+
         body.tx_id = result.hash;
         // pass bankaccount to lapi for crediting
         this.lapi.sellLumens(body)
@@ -250,7 +182,7 @@ export class PaymentService {
 
     })
     .catch((err)=>{
-      
+
               console.log(err);
               this.loadingService.hideLoader();
     })

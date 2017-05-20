@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
-
+import { ContactService } from '../../providers/contact-service';
 /**
  * Generated class for the Contacts page.
  *
@@ -14,11 +14,23 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 })
 export class Contacts {
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
+	contactList = [];
+
+  constructor(public navCtrl: NavController, public navParams: NavParams,
+  	public contactService: ContactService) {
+  	this.loadContacts();
   }
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad Contacts');
+  }
+
+  loadContacts(){
+  	this.contactService.findAll().then((contacts) => {
+          this.contactList=contacts;
+        }, (error) => {
+          console.log(error);
+        })
   }
 
 }

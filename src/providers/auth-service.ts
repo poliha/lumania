@@ -15,11 +15,7 @@ export class AuthService {
 
   signUp(details){
 		return	this.auth.signup(details).then(() => {
-			  // hide loading message
-	      // this.loading.dismiss();
-	      // this.showAlert('Login to  access your account');
 
-			  // console.log("user: ",this.user);
 			  return {"status": "success",
 	  					"messages": []
 	  				};
@@ -53,9 +49,6 @@ export class AuthService {
 			  return {"status": "error",
 	  					"messages": message
 	  				};
-
-	      // this.loading.dismiss();
-	      // this.showAlert(message);
 
 			});
   }
@@ -199,6 +192,24 @@ export class AuthService {
     });
 
     return req;
+  }
+
+  saveProfileData(name, email){
+    let req: any;
+    this.user.details.name = name;
+    this.user.details.email = email;
+    req = this.user.save().then(() => {
+
+    }, (err) => {
+
+    });
+
+    return req;
+  }
+
+
+  getData(key){
+    return this.user.get(key, false);
   }
 
 }

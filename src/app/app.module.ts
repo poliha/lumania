@@ -29,6 +29,13 @@ import { Send } from '../pages/send/send';
 import { Buy } from '../pages/buy/buy';
 import { AccountDetails } from '../pages/account-details/account-details';
 import { LinkAccount } from '../pages/link-account/link-account';
+import { ChangePassword } from '../pages/change-password/change-password';
+import { ChangePin } from '../pages/change-pin/change-pin';
+import { AccountRecovery } from '../pages/account-recovery/account-recovery';
+import { SupportChannels } from '../pages/support-channels/support-channels';
+import { AccountVerification } from '../pages/account-verification/account-verification';
+import { BankDetails } from '../pages/bank-details/bank-details';
+import { ContactForm } from '../pages/contact-form/contact-form';
 
 
 import { AuthService } from '../providers/auth-service';
@@ -40,6 +47,12 @@ import { LoadingService } from '../providers/loading-service';
 import { AlertService } from '../providers/alert-service';
 // import { Storage } from '@ionic/storage';
 import { StellarService } from '../providers/stellar-sdk';
+import { ContactService } from '../providers/contact-service';
+import { ToastService } from '../providers/toast-service';
+import { File } from '@ionic-native/file';
+import { Transfer } from '@ionic-native/transfer';
+import { FilePath } from '@ionic-native/file-path';
+import { Camera } from '@ionic-native/camera';
 
 
 import { StatusBar } from '@ionic-native/status-bar';
@@ -78,7 +91,14 @@ let pages = [
     Send,
     Buy,
     LinkAccount,
-    AccountDetails
+    AccountDetails,
+    ChangePassword,
+    ChangePin,
+    AccountRecovery,
+    SupportChannels,
+    AccountVerification,
+    BankDetails,
+    ContactForm
   ];
 
 let configOptions = {
@@ -115,7 +135,13 @@ let configOptions = {
     PaymentService,
     LoadingService,
     AlertService,
-    StellarService
+    StellarService,
+    ContactService,
+    ToastService,
+    File,
+    Transfer,
+    Camera,
+    FilePath,
   ]
 })
 export class AppModule {}

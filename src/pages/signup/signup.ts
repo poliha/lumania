@@ -1,11 +1,13 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, LoadingController, AlertController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, LoadingController, AlertController, App } from 'ionic-angular';
 import { UserDetails} from '@ionic/cloud-angular';
 import { Login } from '../login/login';
 import { Dashboard } from '../dashboard/dashboard';
+import { Welcome } from '../welcome/welcome';
 import { AuthService } from '../../providers/auth-service';
 import { Utility } from '../../providers/utility';
 import { Lapi } from '../../providers/lapi';
+import { AlertService } from '../../providers/alert-service';
 
 @IonicPage()
 @Component({
@@ -25,9 +27,11 @@ export class Signup {
   alert: any;
   messages: any = [];
   auth_code: any;
-  constructor(public navCtrl: NavController, public navParams: NavParams, public alertCtrl: AlertController,
-     public loadingCtrl: LoadingController, public authService: AuthService, public utility: Utility,
-     public lapi: Lapi ) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, 
+    public alertCtrl: AlertController, public alertService: AlertService,
+    public loadingCtrl: LoadingController, public authService: AuthService, 
+    public utility: Utility, public lapi: Lapi, public appCtrl: App ) {
+
     this.auth_code = this.utility.randomString(6);
     if (this.authService.isLoggedIn()) {
       this.navCtrl.push(Dashboard);
@@ -76,9 +80,11 @@ export class Signup {
   		'name': this.account.firstname+" "+this.account.surname,
       'custom' : {
         'accounts': false,
-        'sex': 'male',
+        'gender': false,
         'email_auth_code': this.auth_code,
-        'email_verified': false
+        'email_verified': false,
+        'pin': false,
+        'kyc_tier': 0
       }
   	};
   	console.log('details: ', details);
@@ -95,7 +101,6 @@ export class Signup {
       }
 
       if (resp.status === 'success') {
-        // to do send ntification email with verification code
         // attempt to login user
         return this.authService.login(details);
       }
@@ -126,6 +131,7 @@ export class Signup {
 
             }, (err) => {
               // to do add toast
+              // maybe delete user from backend if error occured
               console.log(err);
               alert(err);
 
@@ -139,7 +145,11 @@ export class Signup {
         // hide loading
         this.loading.dismiss();
         // navigate to dashboard
-        this.navCtrl.push(Dashboard);
+        this.navCtrl.push(Dashboard).catch(err => {
+          this.alertService.basicAlert("Error", "Please Login" ,"Ok");
+          this.authService.logout();
+          this.appCtrl.getRootNav().setRoot(Welcome);
+        });
 
     },
     (err) => {

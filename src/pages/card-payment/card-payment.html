@@ -7,7 +7,7 @@
 <ion-header>
 
   <ion-navbar>
-    <ion-title>Add Funds</ion-title>
+    <ion-title>Buy Lumens</ion-title>
   </ion-navbar>
 
 </ion-header>
@@ -21,11 +21,17 @@
         <ion-input color="primary" type="number" [(ngModel)]="amount"
         (input)='onInput($event.target.value)'  placeholder="Amount"></ion-input>
         <ion-select [(ngModel)]="currency" (ionChange)="calculateXLM()">
-        <ion-option *ngFor="let c of currencyList">{{c}}</ion-option>
+          <ion-option *ngFor="let c of currencyList">{{c}}</ion-option>
 		    </ion-select>
       </ion-item>
+
       <ion-item>
         In XLM: {{lumens_amount}}
+      </ion-item>
+
+      <ion-item>
+        <ion-label fixed>Enter PIN</ion-label>
+        <ion-input color="primary" type="number" [(ngModel)]="pin" placeholder="PIN"></ion-input>
       </ion-item>
   </ion-list>
 

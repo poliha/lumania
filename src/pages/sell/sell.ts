@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, Config } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, AlertController, Config } from 'ionic-angular';
 import { PaymentService } from '../../providers/payment-service';
 import { AuthService } from '../../providers/auth-service';
 import { Lapi } from '../../providers/lapi';
@@ -8,13 +8,9 @@ import { Utility } from '../../providers/utility';
 import { StellarService } from '../../providers/stellar-sdk';
 import { AlertService } from '../../providers/alert-service';
 import { Storage } from '@ionic/storage';
+import { ChangePin } from '../change-pin/change-pin';
 
-/**
- * Generated class for the Sell page.
- *
- * See http://ionicframework.com/docs/components/#navigation for more info
- * on Ionic pages and navigation.
- */
+
 @IonicPage()
 @Component({
   selector: 'page-sell',
@@ -25,6 +21,7 @@ export class Sell {
   currentBalance = 0.00;
   currentAccountId: any = false;
   rates: any = {};
+  pin: any = "";
   currentRate: any = 1;
   xlmAmount = 0.00;
   fiatAmount = 0.00;
@@ -34,8 +31,8 @@ export class Sell {
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public config: Config,
     public loadingService: LoadingService, public utility: Utility,	public lapi: Lapi,
-    public paymentService: PaymentService,public alertService: AlertService, public storage: Storage,
-  	public stellarService: StellarService, public authService: AuthService)
+    public paymentService: PaymentService,public alertService: AlertService, public alertCtrl: AlertController,
+    public storage: Storage, public stellarService: StellarService, public authService: AuthService)
   {
     this.currencyList = this.config.get('currencyList');
     // this.currency = this.config.get('defaultCurrency');
@@ -55,7 +52,28 @@ export class Sell {
     // this.getBalance();
     this.getRates();
 
+    this.checkPin();
+  }
 
+  checkPin(){
+    if (this.authService.getData('pin')) {
+      return true;
+    } else {
+        let alert = this.alertCtrl.create({
+        title: 'Set Pin',
+        message: 'You have not set a PIN yet. Please set Pin',
+        buttons: [
+          {
+            text: 'Ok',
+            handler: () => {
+              this.navCtrl.push(ChangePin);
+            }
+          }
+        ]
+      });
+      
+      alert.present();
+    }
   }
 
   getBalance(){
@@ -117,35 +135,41 @@ export class Sell {
   }
 
   calculateFiat(value){
-    // console.log("calculateinput", value, this.currency, this.amount, this.lumens_amount);
-    // console.log("rates", this.rates);
 
-    if (this.recvCurrency === 'USD') {
-      this.fiatAmount = this.utility.round((this.xlmAmount*this.currentRate), 7);
+
+    if (!this.xlmAmount) { 
+      this.fiatAmount = 0.00;
     } else {
-      // let target = this.recvCurrency+'XLM';
-      this.fiatAmount = this.utility.round((this.xlmAmount*this.currentRate),7);
+
+      if (this.recvCurrency === 'USD') {
+        this.fiatAmount = this.utility.round((this.xlmAmount*this.currentRate), 7);
+      } else {
+        // let target = this.recvCurrency+'XLM';
+        this.fiatAmount = this.utility.round((this.xlmAmount*this.currentRate),7);
+      }
     }
 
   }
 
   calculateXLM(value){
   	this.getCurrentRate();
-    // console.log("calculateinput", value, this.currency, this.amount, this.lumens_amount);
-    // console.log("rates", this.rates);
 
-    if (this.recvCurrency === 'USD') {
-
-      this.xlmAmount = this.utility.round((this.fiatAmount/this.currentRate),7);
+    if (!this.fiatAmount) { 
+      this.xlmAmount = 0.00;
     } else {
-      // let target = this.recvCurrency+'XLM';
-      this.xlmAmount = this.utility.round(((this.fiatAmount)/this.currentRate),7);
-    }
 
+      if (this.recvCurrency === 'USD') {
+
+        this.xlmAmount = this.utility.round((this.fiatAmount/this.currentRate),7);
+      } else {
+        // let target = this.recvCurrency+'XLM';
+        this.xlmAmount = this.utility.round(((this.fiatAmount)/this.currentRate),7);
+      }
+    }
   }
 
   sell(){
-  	this.paymentService.sellLumens(this.fiatAmount, this.xlmAmount, this.recvCurrency, this.currentRate, this.currentAccountId);
+  	this.paymentService.sellLumens(this.fiatAmount, this.xlmAmount, this.recvCurrency, this.currentRate, this.currentAccountId, this.pin);
   }
 
 }

@@ -49,6 +49,10 @@
       <ion-item>
         Rate: {{currentRate  | number:'1.5-8'}}
       </ion-item>
+      <ion-item>
+        <ion-label fixed>Enter PIN</ion-label>
+        <ion-input color="primary" type="number" [(ngModel)]="pin" placeholder="PIN"></ion-input>
+      </ion-item>
   </ion-list>
 
   <div padding>

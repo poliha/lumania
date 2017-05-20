@@ -21,9 +21,18 @@
 			</ion-item>
       <ion-item>
         <ion-input color="primary" type="number" [(ngModel)]="rcvrObj"
-        placeholder="Stellar ID or Email"></ion-input>
+        placeholder="Receiver Address"></ion-input>
       </ion-item>
 
+      <ion-item>
+        <ion-label>Address Type</ion-label>
+        <ion-select [(ngModel)]="address_type">
+          <ion-option value="1">Public Key</ion-option>
+          <ion-option value="2">Stellar Address</ion-option>
+          <ion-option value="3">Email</ion-option>
+        </ion-select>
+      </ion-item>
+      
 			<ion-item>
 				<ion-title>Amount</ion-title>
 			</ion-item>
@@ -40,6 +49,10 @@
       <ion-item>
 
         <small>You have XLM <b>{{displayBalance | number:'1.5-8'}}</b></small>
+      </ion-item>
+      <ion-item>
+        <ion-label fixed>Enter PIN</ion-label>
+        <ion-input color="primary" type="number" [(ngModel)]="pin" placeholder="PIN"></ion-input>
       </ion-item>
   </ion-list>
 

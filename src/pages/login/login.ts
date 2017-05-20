@@ -1,16 +1,13 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams} from 'ionic-angular';
+import { IonicPage, NavController, NavParams, App} from 'ionic-angular';
 // import { Auth, User} from '@ionic/cloud-angular';
 import { PasswordReset } from '../password-reset/password-reset';
 import { AuthService } from '../../providers/auth-service';
 import { LoadingService } from '../../providers/loading-service';
 import { Dashboard } from '../dashboard/dashboard';
-/**
- * Generated class for the Login page.
- *
- * See http://ionicframework.com/docs/components/#navigation for more info
- * on Ionic pages and navigation.
- */
+import { Welcome } from '../welcome/welcome';
+import { AlertService } from '../../providers/alert-service';
+
 @IonicPage()
 @Component({
   selector: 'page-login',
@@ -25,8 +22,9 @@ export class Login {
   messages: any = [];
   // loading: any;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams,
-  	public loadingService: LoadingService, public authService: AuthService) {
+  constructor(private appCtrl: App, public navCtrl: NavController, public navParams: NavParams, 
+    public alertService: AlertService, public loadingService: LoadingService, 
+    public authService: AuthService) {
     if (this.authService.isLoggedIn()) { 
       this.navCtrl.push(Dashboard);
     } else {
@@ -39,12 +37,7 @@ export class Login {
     console.log('ionViewDidLoad Login');
   }
 
-  // showLoader(){
-  //    this.loading = this.loadingCtrl.create({
-  //     content: "Authenticating..."
-  //   });
-  //   this.loading.present();
-  // }
+
 
   doLogin(){
      // show loading message
@@ -53,7 +46,7 @@ export class Login {
     this.authService.login(details)
       .then((resp) => {
         this.loadingService.hideLoader();
-
+        console.log(resp);
         // this.loading.dismiss();
         if (resp.status === 'error') {
           this.messages = resp.messages;
@@ -61,7 +54,11 @@ export class Login {
 
         if (resp.status === 'success') {
           // navigate to dashboard
-          this.navCtrl.push(Dashboard);
+          this.navCtrl.push(Dashboard).catch(err => {
+            this.alertService.basicAlert("Error", "Please Login" ,"Ok");
+            this.authService.logout();
+            this.appCtrl.getRootNav().setRoot(Welcome);
+          });
         }
       });
 

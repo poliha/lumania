@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController, AlertController, NavParams } from 'ionic-angular';
 import { PaymentService } from '../../providers/payment-service';
 import { AuthService } from '../../providers/auth-service';
 import { Lapi } from '../../providers/lapi';
@@ -7,13 +7,8 @@ import { LoadingService } from '../../providers/loading-service';
 
 import { StellarService } from '../../providers/stellar-sdk';
 import { AlertService } from '../../providers/alert-service';
+import { ChangePin } from '../change-pin/change-pin';
 
-/**
- * Generated class for the Send page.
- *
- * See http://ionicframework.com/docs/components/#navigation for more info
- * on Ionic pages and navigation.
- */
 @IonicPage()
 @Component({
   selector: 'page-send',
@@ -28,10 +23,12 @@ export class Send {
   currentBalance = 0.00;
   displayBalance = 0.00;
   currency = 'XLM';
+  pin: any = "";
+  address_type = 0;
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public loadingService: LoadingService,
   	public lapi: Lapi, 	public paymentService: PaymentService,public alertService: AlertService, 
-  	public stellarService: StellarService, public authService: AuthService
+  	public stellarService: StellarService, public authService: AuthService, public alertCtrl: AlertController
   ) {
 
     this.currentAccountId = this.authService.getAccountId();
@@ -45,9 +42,31 @@ export class Send {
     console.log('getting balance');
 
     this.getBalance();
+    this.checkPin();
 
   }
 
+
+  checkPin(){
+    if (this.authService.getData('pin')) {
+      return true;
+    } else {
+        let alert = this.alertCtrl.create({
+        title: 'Set Pin',
+        message: 'You have not set a PIN yet. Please set Pin',
+        buttons: [
+          {
+            text: 'Ok',
+            handler: () => {
+              this.navCtrl.push(ChangePin);
+            }
+          }
+        ]
+      });
+      
+      alert.present();
+    }
+  }
 
   getBalance(){
 
@@ -73,21 +92,75 @@ export class Send {
   }
 
   calculateXLM(value){
-
-    this.displayBalance = this.currentBalance - value;
-
+    if (!value) { 
+      this.displayBalance = this.currentBalance
+    } else {
+      this.displayBalance = this.currentBalance - value;
+    }
   }
 
   send(){
   	this.loadingService.showLoader("Sending...");
-  	if ((this.xlmAmount - 20) >= parseFloat(this.balances[0].balance)) { 
-  		this.stellarService.sendLumens(this.destAcct, this.xlmAmount)
-  		.then((result)=>{
-        
-        this.loadingService.hideLoader();
-        this.alertService.basicAlert("Success", this.xlmAmount+"XLM sent" ,"Ok");
-        
-    	});
+  	if ((this.xlmAmount - 20) >= parseFloat(this.balances[0].balance)) {
+        let body = {
+            "pin": this.pin,
+            "token": this.authService.getLapiToken(),
+            "uuid":  this.authService.getUuid()
+          };
+
+      // verify pin
+        this.lapi.verifyPin(body)
+            .map(res => res.json())
+            .subscribe((resp) => {
+              console.log(resp);
+
+              switch (this.address_type) {
+                case 1:
+                              // send lumens
+                  this.stellarService.sendLumens(this.destAcct, this.xlmAmount)
+                  .then((result)=>{
+
+                    this.loadingService.hideLoader();
+                    this.alertService.basicAlert("Success", this.xlmAmount+"XLM sent" ,"Ok");
+
+                  });
+
+                  break;
+                case 2:
+                  this.stellarService.sendLumensViaFederation(this.destAcct, this.xlmAmount)
+                  .then((result)=>{
+
+                    this.loadingService.hideLoader();
+                    this.alertService.basicAlert("Success", this.xlmAmount+"XLM sent" ,"Ok");
+
+                  });
+
+                  break;
+
+                case 3:
+                  this.stellarService.sendLumensViaEmail(this.destAcct, this.xlmAmount,this.pin)
+                  .then((result)=>{
+
+                    this.loadingService.hideLoader();
+                    this.alertService.basicAlert("Success", this.xlmAmount+"XLM sent" ,"Ok");
+
+                  });
+
+                  break;
+
+                default:
+                  this.alertService.basicAlert("Error", "Select an address type" ,"Ok");
+                  break;
+              }
+
+            }, (err) => {
+              // to do add toast
+              console.log(err.json());
+              let errorObj = err.json();
+              this.loadingService.hideLoader();
+              this.alertService.basicAlert("Error", errorObj.content.message.join('. ') ,"Ok");
+
+            });
 
 
   	} else {

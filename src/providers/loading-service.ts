@@ -31,4 +31,7 @@ export class LoadingService {
   	this.loading.dismiss();
   }
 
+  hideAll(){
+    this.loading.dismissAll();
+  }
 }

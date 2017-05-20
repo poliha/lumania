@@ -1,0 +1,77 @@
+<!--
+  Generated template for the AccountRecovery page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>Account Recovery</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content>
+	<ion-list>
+      <ion-item *ngFor="let m of messages">
+        {{m}}
+
+      </ion-item>
+      <ion-item text-wrap>
+      	Enter your recovery code below to recovery your account.
+      	Use this when you lose or switch devices.
+  	  </ion-item>
+  </ion-list>
+
+			<ion-list>
+
+		      <ion-item text-wrap>
+		      	<ion-label stacked>Select Account</ion-label>
+		  	    <ion-select [(ngModel)]="selectedAccount">
+		          <ion-option value="-1">Choose Stellar Account</ion-option>
+		          <ion-option *ngFor="let a of accounts" value="{{a}}">{{a.account_id}}</ion-option>
+		  			</ion-select>
+		  	  </ion-item>
+		  </ion-list>
+			<ion-grid>
+			  <ion-row>
+			    <ion-col>
+			    <ion-label stacked>1st Key</ion-label>
+			     <ion-input type="text" [(ngModel)]="key1" name="key1"  required></ion-input>
+			    </ion-col>
+			    <ion-col>
+			    <ion-label stacked>2nd Key</ion-label>
+			      <ion-input type="text" [(ngModel)]="key2" name="key2"  required></ion-input>
+			    </ion-col>
+			    <ion-col>
+			    <ion-label stacked>3rd Key</ion-label>
+			      <ion-input type="text" [(ngModel)]="key3" name="key3"  required></ion-input>
+			    </ion-col>
+			  </ion-row>
+			  <ion-row>
+			    <ion-col>
+			    <ion-label stacked>4th Key</ion-label>
+			     <ion-input type="text" [(ngModel)]="key4" name="key4"  required></ion-input>
+			    </ion-col>
+			    <ion-col>
+			    <ion-label stacked>5th Key</ion-label>
+			      <ion-input type="text" [(ngModel)]="key5" name="key5"  required></ion-input>
+			    </ion-col>
+			    <ion-col>
+			    <ion-label stacked>6th Key</ion-label>
+			      <ion-input type="text" [(ngModel)]="key6" name="key6"  required></ion-input>
+			    </ion-col>
+			  </ion-row>
+			</ion-grid>
+
+	    <ion-list>
+	      <div padding>
+	        <button ion-button color="primary" block (click)="showPrompt()">Recover</button>
+	      </div>
+
+	    </ion-list>
+
+
+</ion-content>

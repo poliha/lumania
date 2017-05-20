@@ -20,13 +20,18 @@
     		<ion-img (click)="chooseImage()" style="width: 80px; height: 80px;" src="account.image"></ion-img>
     	</ion-item>
       <ion-item>
-        <ion-label fixed>{{ 'NAME' | translate }}</ion-label>
-        <ion-input type="text" [(ngModel)]="account.name" name="name"></ion-input>
+        <ion-label stacked>{{ 'FIRSTNAME' | translate }}</ion-label>
+        <ion-input type="text" [(ngModel)]="account.firstname" name="firstname" required></ion-input>
       </ion-item>
 
       <ion-item>
-        <ion-label fixed>{{ 'EMAIL' | translate }}</ion-label>
-        <ion-input type="email" [(ngModel)]="account.email" name="email"></ion-input>
+        <ion-label stacked>{{ 'SURNAME' | translate }}</ion-label>
+        <ion-input type="text" [(ngModel)]="account.surname" name="surname"  required></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label stacked>{{ 'EMAIL' | translate }}</ion-label>
+        <ion-input type="email" [(ngModel)]="account.email" name="email"  required></ion-input>
       </ion-item>
 
       

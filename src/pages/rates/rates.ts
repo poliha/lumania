@@ -85,8 +85,8 @@ export class Rates {
      
 	      if (prop !== 'USDXLM') {
 	        let base = parseFloat(this.rates[prop])/parseFloat(this.rates.USDXLM);
-	        let buyValue = this.utility.round((base),7);
-	        let sellValue = this.utility.round((base),7);
+	        let buyValue = this.utility.round((base + (base*0.02)),7);
+	        let sellValue = this.utility.round((base - (base*0.02)),7);
 	        tempRatesArray.push({
 	        	"currency": prop.substring(0,3),
 	          "buy": buyValue,
@@ -94,8 +94,8 @@ export class Rates {
 	        });
 	      }else{
 	      	let base = 1/parseFloat(this.rates.USDXLM);
-	        let buyValue = this.utility.round((base),7);
-	        let sellValue = this.utility.round((base),7);
+	        let buyValue = this.utility.round((base + (base*0.02)),7);
+	        let sellValue = this.utility.round((base - (base*0.02)),7);
 	        tempRatesArray.push({
 	        	"currency": prop.substring(0,3),
 	          "buy": buyValue,

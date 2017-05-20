@@ -10,6 +10,7 @@ import { StellarService } from '../../providers/stellar-sdk';
 import { Sell } from '../sell/sell';
 import { Send } from '../send/send';
 import { Storage } from '@ionic/storage';
+import { AlertService } from '../../providers/alert-service';
 
 /**
  * Generated class for the Wallet page.
@@ -28,7 +29,7 @@ export class Wallet {
   currentAccountId: any = false;
   rates: any = {};
   equivalentBalances: any = [];
-  constructor(public navCtrl: NavController, public navParams: NavParams, 
+  constructor(public navCtrl: NavController, public navParams: NavParams, public alertService: AlertService ,
     public stellarService: StellarService, public utility: Utility, public storage: Storage,
   	public authService: AuthService, public lapi: Lapi, public loadingService: LoadingService) {
     this.currentAccountId = this.authService.getAccountId();
@@ -65,19 +66,19 @@ export class Wallet {
   }
 
   getBalance(){
-  
-    if (this.currentAccountId) { 
+
+    if (this.currentAccountId) {
       this.stellarService.getBalance(this.currentAccountId)
         .then((account)=>{
-          
+
          this.balances = account.balances;
          // this.getRates();
 
-         
+
          return this.storage.get('rates');
         })
         .catch((error)=>{
-          
+
           console.log(error);
         })
         .then((val) => {
@@ -163,6 +164,31 @@ export class Wallet {
     this.equivalentBalances = equivBal
     console.log(this.equivalentBalances);
 
+  }
+
+  resendAuthCode(){
+      let options = {
+        'firstname': this.authService.user.details.name,
+        'email': this.authService.user.details.email,
+        'auth_code': this.authService.getData('email_auth_code'),
+        'token': this.authService.getLapiToken(),
+        'uuid': this.authService.getUuid()
+      };
+
+      this.lapi.resendAuthCode(options)
+        .map(res => res.json())
+        .subscribe((resp) => {
+              console.log(resp);
+              this.alertService.basicAlert("Success", resp.content.message.join('. ') ,"Ok");
+
+         },
+         (err:any)=>{
+
+              console.log(err.json());
+              let errorObj = err.json();
+              this.alertService.basicAlert("Error", errorObj.content.message.join('. ') ,"Ok");
+
+        });
   }
 
 }
