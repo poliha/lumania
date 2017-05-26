@@ -17,12 +17,12 @@ export class StellarService {
   	public authService: AuthService, public storage: Storage, public lapi: Lapi,
     public config: Config) {
     console.log('Hello StellarSdk Provider');
-    if ( config.get('production')) {
+    if ( config.get('stellarProduction')) {
         StellarSdk.Network.usePublicNetwork();
         this.server = new StellarSdk.Server(config.get('stellarLiveNetwork'));
       }
 
-    if ( !config.get('production')) {
+    if ( !config.get('stellarProduction')) {
       StellarSdk.Network.useTestNetwork();
       this.server = new StellarSdk.Server(config.get('stellarTestNetwork'));
     }
@@ -31,8 +31,8 @@ export class StellarService {
 
   createAccount(){
 
-    if (this.authService.getData('account_details')) {
-      return this.storage.get('account_details');
+    if (this.authService.getData('account')) {
+      return this.storage.get('account_details_'+this.authService.user.id);
     } else {
 
 
@@ -74,7 +74,7 @@ export class StellarService {
     	// save  account id on Lapi and notify user of recovery code
     	return this.storage.ready().then(() => {
          // set a key/value
-         this.storage.set('account_details', localAccountDetails);
+         this.storage.set('account_details_'+this.authService.user.id, localAccountDetails);
 
          let deviceAcct = {"account_id": localAccountDetails.account_id};
          return this.authService.saveData('account', deviceAcct);
@@ -102,7 +102,7 @@ export class StellarService {
       })
       .then(()=>{
       	// console.log(resp);
-      	return this.storage.get('account_details');
+      	return this.storage.get('account_details_'+this.authService.user.id);
       }, (err) => {
       	// lapitoken error
       	console.log(err);
@@ -174,7 +174,7 @@ export class StellarService {
     // save  account id on Lapi and notify user of recovery code
     return this.storage.ready().then(() => {
        // set a key/value
-      this.storage.set('account_details', localAccountDetails);
+      this.storage.set('account_details_'+this.authService.user.id, localAccountDetails);
 
       let deviceAcct = {"account_id": localAccountDetails.account_id};
       return this.authService.saveData('account', deviceAcct);
@@ -203,7 +203,7 @@ export class StellarService {
     })
     .then(()=>{
       // console.log(resp);
-      return this.storage.get('account_details');
+      return this.storage.get('account_details_'+this.authService.user.id);
     }, (err) => {
       // lapitoken error
       console.log(err);
@@ -267,7 +267,7 @@ export class StellarService {
     // save  account id on Lapi and notify user of recovery code
     return this.storage.ready().then(() => {
        // set a key/value
-      this.storage.set('account_details', localAccountDetails);
+      this.storage.set('account_details_'+this.authService.user.id, localAccountDetails);
 
       let deviceAcct = {"account_id": localAccountDetails.account_id};
       return this.authService.saveData('account', deviceAcct);
@@ -276,7 +276,7 @@ export class StellarService {
     })
     .then(()=>{
       // console.log(resp);
-      return this.storage.get('account_details');
+      return this.storage.get('account_details_'+this.authService.user.id);
     }, (err) => {
       // lapitoken error
       console.log(err);
@@ -293,38 +293,48 @@ export class StellarService {
 
   }
 
-  sendLumens(destAcct, amountToSend){
+  sendLumens(destAcct, amountToSend, memo?: any){
 
     let messages = [];
     let uuid = this.authService.getUuid();
-    let stellarAccount = {};
+    let stellarAccount: any;
     let skey = "";
     let destAcctActive = 0;
     let senderKeypair: any;
     let asset = this.generateAsset(0);
+    let memoText = memo || '';
 
     //get account details
    return this.storage.ready().then(() => {
        // set a key/value
-       this.storage.set('trials', 1);
+       // this.storage.set('trials', 1);
 
-      return this.storage.get('account_details');
+      return this.storage.get('account_details_'+this.authService.user.id);
     })
-    .then((account) => {
+    .then((account:any) => {
+      console.log("account_details_"+this.authService.user.id, account);
       stellarAccount = account;
+      // console.log(stellarAccount);
+      // console.log(JSON.parse(stellarAccount));
       // decrypt secret
-      skey = this.utility.decrypt(account, uuid);
-      senderKeypair = StellarSdk.Keypair.fromSecret(skey);
+      skey = this.utility.decrypt(account.seed_obj, uuid);
+      console.log("skey", skey);
 
+      senderKeypair = StellarSdk.Keypair.fromSecret(skey);
+      console.log("skeyPair", senderKeypair);
       // load dest acct
       return this.server.loadAccount(destAcct);
     })
     .catch((error) =>{
-      if (error.status == 404 || error.status == '404') {
+      console.log(error);
+      if (error.name === 'NotFoundError' || error.data.status == '404') {
         // unable to load dest account
         // messages.push(' Account not active');
         console.error('Destination Account not active');
         destAcctActive = 0;
+      }else{
+        throw new Error("Could not get source account");
+        
       }
 
     })
@@ -339,17 +349,23 @@ export class StellarService {
       return this.server.loadAccount(senderKeypair.publicKey());
     })
     .catch((error) => {
-      if (error.status == 404 || error.status == '404') {
+      console.log(error);
+      if (error.name === 'NotFoundError' || error.data.status == '404') {
         // unable to load source account
         messages.push('Source Account not active');
         console.error('Something went wrong! The source account does not exist!');
         throw new Error('The source account does not exist!');
+      }else{
+        throw new Error(error.message);
+        
       }
+
 
 
     })
     .then((sender) => {
       // build a transaction based on if dest was found or not
+      console.log("sender", sender);
       let transaction: any;
       if (destAcctActive == 1) {
       transaction = new StellarSdk.TransactionBuilder(sender)
@@ -358,6 +374,7 @@ export class StellarService {
                           asset: asset,
                           amount: amountToSend.toString()
                         }))
+                        .addMemo(StellarSdk.Memo.text(memoText))
                         .build();
       }
       if (destAcctActive === 0) {
@@ -366,6 +383,7 @@ export class StellarService {
                             destination: destAcct,
                             startingBalance: amountToSend.toString()
                           }))
+                          .addMemo(StellarSdk.Memo.text(memoText))
                           .build();
       }
 
@@ -377,9 +395,12 @@ export class StellarService {
     })
     .catch((error) => {
       console.error('Something went wrong at the end\n', error);
-      messages.push('Transaction not complete');
+      messages.push('Could not complete Transaction:\n'+error.message);
 
-      this.alertService.basicAlert("Error", messages.join('. ') ,"Ok");
+      return new Promise<void>((resolve, reject) => {
+        reject(new Error(messages.join('. ')));
+      });
+      // this.alertService.basicAlert("Error", messages.join('. ') ,"Ok");
     });
 
   }
@@ -398,12 +419,12 @@ export class StellarService {
 
     //get account details
    return this.storage.ready().then(() => {
-      return this.storage.get('account_details');
+      return this.storage.get('account_details_'+this.authService.user.id);
     })
-    .then((account) => {
+    .then((account:any) => {
       stellarAccount = account;
       // decrypt secret
-      skey = this.utility.decrypt(account, uuid);
+      skey = this.utility.decrypt(account.seed_obj, uuid);
       senderKeypair = StellarSdk.Keypair.fromSecret(skey);
 
       // load dest acct
@@ -421,13 +442,13 @@ export class StellarService {
         return this.server.loadAccount(acctDetails.account_id);
      })
     .catch((error) =>{
-      if (error.status == 404 || error.status == '404') {
+      if (error.name === 'NotFoundError' || error.data.status == '404') {
         // unable to load dest account
         // messages.push(' Account not active');
         console.error('Destination Account not active');
         destAcctActive = 0;
       }else{
-        throw new Error('The source account does not exist!');
+        throw new Error(error.message);
       }
 
     })
@@ -442,13 +463,13 @@ export class StellarService {
       return this.server.loadAccount(senderKeypair.publicKey());
     })
     .catch((error) => {
-      if (error.status == 404 || error.status == '404') {
+      if (error.name === 'NotFoundError' || error.data.status == '404') {
         // unable to load source account
         messages.push('Source Account not active');
         console.error('Something went wrong! The source account does not exist!');
         throw new Error('The source account does not exist!');
       }else{
-        throw new Error('The source account does not exist!');
+        throw new Error(error.message);
       }
 
 
@@ -482,9 +503,12 @@ export class StellarService {
     })
     .catch((error) => {
       console.error('Something went wrong at the end\n', error);
-      messages.push('Transaction not complete');
+      messages.push('Could not complete Transaction:\n'+error.message);
 
-      this.alertService.basicAlert("Error", messages.join('. ') ,"Ok");
+      return new Promise<void>((resolve, reject) => {
+        reject(new Error(messages.join('. ')));
+      });
+      // this.alertService.basicAlert("Error", messages.join('. ') ,"Ok");
     });
 
   }
@@ -507,38 +531,44 @@ export class StellarService {
     let senderKeypair: any;
     let asset = this.generateAsset(0);
     let memoText = this.utility.randomString(6);
+    let fedFound = 0;
+
     // get account id from federation
 
     //get account details
    return this.storage.ready().then(() => {
-      return this.storage.get('account_details');
+      return this.storage.get('account_details_'+this.authService.user.id);
     })
-    .then((account) => {
+    .then((account: any) => {
       stellarAccount = account;
       // decrypt secret
-      skey = this.utility.decrypt(account, uuid);
+      skey = this.utility.decrypt(account.seed_obj, uuid);
       senderKeypair = StellarSdk.Keypair.fromSecret(skey);
 
       // load dest acct
       return StellarSdk.FederationServer.resolve(destAcct+'*'+'lumania.tech');
     })
     .catch((error) => {
-        console.log("Error",error);
+        console.log("Not found in lumania federation",error);
+
         // messages.push('Unable to load federated account');
         // console.error('Something went wrong! The source account does not exist!');
-        // throw new Error('The source account does not exist!');
+        throw new Error('FedNotFound');
       })
     .then(function(acctDetails) {
+        fedFound = 1;
         console.log("acctDetails", acctDetails);
         rcvrAcct = acctDetails;
         return this.server.loadAccount(acctDetails.account_id);
      })
     .catch((error) =>{
-      if (error.status == 404 || error.status == '404') {
+      if (error.name === 'NotFoundError') {
         // unable to load dest account
         // messages.push(' Account not active');
         console.error('Destination Account not active');
         destAcctActive = 0;
+      }else{
+        // throw new Error(error.message);
       }
 
     })
@@ -553,31 +583,52 @@ export class StellarService {
       return this.server.loadAccount(senderKeypair.publicKey());
     })
     .catch((error) => {
-      if (error.status == 404 || error.status == '404') {
+      if (error.name === 'NotFoundError') {
         // unable to load source account
         messages.push('Source Account not active');
         console.error('Something went wrong! The source account does not exist!');
-        throw new Error('The source account does not exist!');
+        throw new Error('SourceNotFound');
       }else{
-        throw new Error('The source account does not exist!');
+        throw new Error(error.message);
       }
 
 
     })
     .then((sender) => {
+      console.log("destActiv", destAcctActive, "fedfu", fedFound);
       // build a transaction based on if dest was found or not
       let transaction: any;
       if (destAcctActive == 1) {
-      transaction = new StellarSdk.TransactionBuilder(sender)
+        console.log("in 1");
+        transaction = new StellarSdk.TransactionBuilder(sender)
                         .addOperation(StellarSdk.Operation.payment({
                           destination: rcvrAcct.account_id,
                           asset: asset,
                           amount: amountToSend.toString()
                         }))
                         .build();
+        // sign transaction
+        transaction.sign(senderKeypair);
+
+        return this.server.submitTransaction(transaction);
       }
-      if (destAcctActive === 0) {
-       
+
+      if (destAcctActive === 0 && fedFound == 1) {
+        console.log("in 01");
+        transaction = new StellarSdk.TransactionBuilder(sender)
+                        .addOperation(StellarSdk.Operation.createAccount({
+                            destination: rcvrAcct.account_id,
+                            startingBalance: amountToSend.toString()
+                          }))
+                          .build();
+        // sign transaction
+        transaction.sign(senderKeypair);
+
+        return this.server.submitTransaction(transaction);
+      }
+
+      if (destAcctActive === 0 && fedFound === 0) {
+       console.log("in 00");
         // send to lumania with memo id
         this.lapi.getMasterAccount()
           .map(res => res.json())
@@ -592,12 +643,16 @@ export class StellarService {
                         }))
                           .addMemo(StellarSdk.Memo.text(memoText))
                           .build();
+                    // sign transaction
+                    transaction.sign(senderKeypair);
+
+                    return this.server.submitTransaction(transaction);
                 }, (err) => {
                   // to do add toast
                   console.log(err);
                   // let errorObj = err.json();
                   // messages.push(errorObj.content.message[0]);
-                  // throw new Error("not saved");
+                  throw new Error("Lumania Account Not Ready");
                   // this.alertService.basicAlert("Error", errorObj.content.message[0] ,"Ok");
 
                 });
@@ -606,10 +661,7 @@ export class StellarService {
 
       }
 
-      // sign transaction
-      transaction.sign(senderKeypair);
-
-      return this.server.submitTransaction(transaction);
+      
 
     })
     .then((result)=>{
@@ -629,7 +681,10 @@ export class StellarService {
           .subscribe((resp) => {
                 console.log(resp);
 
-                return true;
+                return new Promise<void>((resolve, reject) => {
+                  resolve( resp );
+                });
+
               }, (err) => {
                 // to do add toast
                 console.log(err.json());
@@ -644,9 +699,13 @@ export class StellarService {
     })
     .catch((error) => {
       console.error('Something went wrong at the end\n', error);
-      messages.push('Transaction not complete');
+      messages.push('Could not complete Transaction:\n'+error.message);
 
-      this.alertService.basicAlert("Error", messages.join('. ') ,"Ok");
+      return new Promise<void>((resolve, reject) => {
+        reject(new Error(messages.join('. ')));
+      });
+
+      // this.alertService.basicAlert("Error", messages.join('. ') ,"Ok");
     });
 
 

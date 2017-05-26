@@ -17,21 +17,29 @@
 
 	<table>
 		<thead>
-			<tr>
+			<tr class="no-border">
 				<th></th>
-				<th>Buy</th>
-				<th>Sell</th>
+				<th>
+					<h3 color="primary">Buy</h3>
+				</th>
+				<th>
+					<h3 color="danger">Sell</h3>
+				</th>
 			</tr>
 		</thead>
 		<tr *ngFor="let r of ratesObj">
 			<td>
-				<button ion-button item-left color="dark" clear>{{ r.currency }}</button>
+				<button ion-button item-left color="dark" clear>
+					<ion-avatar item-left>
+          <img src="assets/img/{{r.currency}}.png">
+      	</ion-avatar> &nbsp; {{ r.currency }}
+				</button>
 			</td>
 			<td>
-				<button ion-button (click)="buyPage(r.currency,r.buy)" color="primary" clear>{{ r.buy | number:'1.5-8' }}</button>
+				<button ion-button (click)="buyPage(r.currency,r.buy)" color="primary" clear>{{ r.buy | number:'1.5-5' }}</button>
 			</td>
 			<td>
-				<button ion-button (click)="sellPage(r.currency,r.sell)" color="secondary" clear>{{ r.sell | number:'1.5-8' }}</button>
+				<button ion-button (click)="sellPage(r.currency,r.sell)" color="danger" clear>{{ r.sell | number:'1.5-5' }}</button>
 			</td>
 		</tr>
 	</table>

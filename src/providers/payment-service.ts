@@ -24,6 +24,7 @@ export class PaymentService {
   // Change before going live
   raveSecretKey = 'FLWSECK-bb971402072265fb156e90a3578fe5e6-X';
   raveUrl = 'http://flw-pms-dev.eu-west-1.elasticbeanstalk.com/flwv3-pug/getpaidx/api/verify';
+  lumens_amount = 0;
   // var self = this;
   constructor(public http: Http, public authService: AuthService, public lapi: Lapi,
     public alertService: AlertService, public loadingService: LoadingService,
@@ -33,7 +34,11 @@ export class PaymentService {
   }
 
   raveCheckout(amount, currency, lumens_amount, pin){
-  	let txRef = this.utility.getTxRef();
+  	
+    this.lumens_amount = lumens_amount;
+
+    let txRef = this.utility.getTxRef();
+
   	let options = {
   		"txref": txRef,
   		"amount": amount,
@@ -94,7 +99,13 @@ export class PaymentService {
 
       this.stellarSdk.createAccount().then((account)=>{
         console.log("account", account);
-        return this.requestLumens(response.tx.txRef,response.tx.flwRef, account.account_id, response.tx.amount);
+        if (account) { 
+          return this.requestLumens(response.tx.txRef,response.tx.flwRef, account.account_id, response.tx.amount);
+        } else {
+          this.loadingService.hideLoader();
+          this.alertService.basicAlert("Error", "Account not found on device" ,"Ok");
+        }
+
       });
 
 
@@ -124,12 +135,12 @@ export class PaymentService {
             .subscribe((resp) => {
               console.log(resp);
               this.loadingService.hideLoader();
-              this.alertService.basicAlert("Success", amount+"XLM added to account" ,"Ok");
+              this.alertService.basicAlert("Success", this.lumens_amount+"XLM added to account" ,"Ok");
             }, (err) => {
               // to do add toast
               console.log(err);
               this.loadingService.hideLoader();
-              this.alertService.basicAlert("Request Saved", "Your request will be automatically processed in 10minutes" ,"Ok");
+              this.alertService.basicAlert("Request Saved", "Your request will be automatically processed shortly" ,"Ok");
 
             });
 
@@ -137,8 +148,9 @@ export class PaymentService {
 
   sellLumens(fiatAmount, xlmAmount, currency, currentRate, currentAccount, pin){
 
-    // verify if currency is supported and save tx in lapi
-    // if it is supported return lumania account id and memotext
+    // verify if currency is supported
+    // if surported save tx in lapi
+    // if tx saved return lumania account id and memotext
     // send lumania amounts in lumens with memo
     // connect to lapi with tx hash
     // if tx hash is correct and tx complete  withdraw funds 
@@ -158,35 +170,57 @@ export class PaymentService {
         "uuid":  this.authService.getUuid(),
         "email": this.authService.user.details.email,
         "name": this.authService.user.details.name,
+        "tx_hash": "",
         "tx_id": ""
       };
 
-    // send lumens to Lumania
-    this.stellarSdk.sendLumens(currentAccount, xlmAmount).then((result)=>{
+      this.lapi.saveSellTx(body)
+          .map(res => res.json())
+          .subscribe((resp) => {
+            console.log(resp);
+            let respObj = resp.content.data;
+            body.tx_id = respObj.tx_id;
+            // send lumens to Lumania
+            this.stellarSdk.sendLumens(respObj.lumania_account, xlmAmount, respObj.memo_text).then((result)=>{
 
-        body.tx_id = result.hash;
-        // pass bankaccount to lapi for crediting
-        this.lapi.sellLumens(body)
-            .map(res => res.json())
-            .subscribe((resp) => {
-              console.log(resp);
-              this.loadingService.hideLoader();
-              this.alertService.basicAlert("Success", xlmAmount+"XLM sold" ,"Ok");
-            }, (err) => {
-              // to do add toast
-              console.log(err);
-              this.loadingService.hideLoader();
-              this.alertService.basicAlert("Request Saved", "Your request will be automatically processed in 10minutes" ,"Ok");
+                body.tx_hash = result.hash;
+                // send tx hash to lumania for verification and withdrawal
+                this.lapi.sellLumens(body)
+                    .map(res => res.json())
+                    .subscribe((resp) => {
+                      console.log(resp);
+                      this.loadingService.hideLoader();
+                      this.alertService.basicAlert("Success", xlmAmount+"XLM sold" ,"Ok");
+                    }, (err) => {
+                      // to do add toast
+                      console.log(err);
+                      this.loadingService.hideLoader();
+                      this.alertService.basicAlert("Request Saved", "Your request will be automatically processed shortly" ,"Ok");
 
+                    });
+
+            })
+            .catch((err)=>{
+
+                      console.log(err);
+                      this.loadingService.hideLoader();
             });
 
-    })
-    .catch((err)=>{
 
-              console.log(err);
-              this.loadingService.hideLoader();
-    })
-    ;
+
+          }, (err) => {
+
+            // could not save sell request, unsupported currency or sales error
+            console.log(err);
+            let errorObj = err.json();
+            this.loadingService.hideLoader();
+            this.alertService.basicAlert("Request Error", errorObj.content.message.join('. ') ,"Ok");
+
+          });
+
+
+
+
 
 
   }

@@ -3,13 +3,8 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { CardPayment } from '../card-payment/card-payment';
 import { AccountDetails } from '../account-details/account-details';
 import { LinkAccount } from '../link-account/link-account';
+import { ClaimLumensPage } from '../claim-lumens/claim-lumens';
 
-/**
- * Generated class for the PaymentMethod page.
- *
- * See http://ionicframework.com/docs/components/#navigation for more info
- * on Ionic pages and navigation.
- */
 @IonicPage()
 @Component({
   selector: 'page-payment-method',
@@ -35,6 +30,9 @@ export class PaymentMethod {
   		case 3:
   			this.navCtrl.push(AccountDetails);
   			break;
+      case 4:
+        this.navCtrl.push(ClaimLumensPage);
+        break;
   		default:
   			// code...
   			break;

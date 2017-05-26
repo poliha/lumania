@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Http, RequestOptions, URLSearchParams } from '@angular/http';
 import 'rxjs/add/operator/map';
+import { Config } from 'ionic-angular';
 
 /**
  * Api is a generic REST Api handler. Set your API url first.
@@ -8,9 +9,11 @@ import 'rxjs/add/operator/map';
 @Injectable()
 export class Api {
   // url: string = 'http://localhost:8888';
-  url: string = 'http://lumania.tech:8888';
-
-  constructor(public http: Http) {
+  // url: string = 'http://lumania.tech:8888';
+  url: string;
+  constructor(public http: Http, public config: Config) {
+    this.url = this.config.get('production') ? this.config.get('apiLiveUrl') : this.config.get('apiTestUrl');
+    console.log("url",this.url);
   }
 
   get(endpoint: string, params?: any, options?: RequestOptions) {

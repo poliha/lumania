@@ -14,7 +14,7 @@ import { ChangePin } from '../change-pin/change-pin';
   templateUrl: 'card-payment.html',
 })
 export class CardPayment {
-	amount: any = 0.00;
+	amount: any;
   pin: any = "";
 	currency: string;
   currencyList = [];

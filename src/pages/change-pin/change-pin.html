@@ -26,16 +26,16 @@
 
 	      <ion-item>
 	        <ion-label stacked>Old PIN </ion-label>
-	        <ion-input type="text" [(ngModel)]="changeObj.old_pin" name="old_pin"  required></ion-input>
+	        <ion-input type="password" [(ngModel)]="changeObj.old_pin" name="old_pin"  required min="4" max="4"></ion-input>
 	      </ion-item>
 
       <ion-item>
         <ion-label stacked>New PIN</ion-label>
-        <ion-input type="text" [(ngModel)]="changeObj.pin" name="pin"  required></ion-input>
+        <ion-input type="password" [(ngModel)]="changeObj.pin" name="pin"  required min="4" max="4"></ion-input>
       </ion-item>
       <ion-item>
         <ion-label stacked>Confirm New PIN</ion-label>
-        <ion-input type="text" [(ngModel)]="changeObj.confirm_pin" name="confirm_pin"  required></ion-input>
+        <ion-input type="password" [(ngModel)]="changeObj.confirm_pin" name="confirm_pin" min="4" max="4"  required></ion-input>
       </ion-item>      
 	      
 	      <div padding>
@@ -48,17 +48,17 @@
 	<form (submit)="setPin()" [hidden]="isset_pin">
 	    <ion-list>
 
-	      <ion-item>
+	      <ion-item text-wrap>
 	       You don't have a PIN set yet to verify your transactions. Set PIN now.
 	      </ion-item>
 
       <ion-item>
         <ion-label stacked>New PIN</ion-label>
-        <ion-input type="number" [(ngModel)]="setObj.pin" name="pin"  required></ion-input>
+        <ion-input type="password" [(ngModel)]="setObj.pin" name="pin" min="4" max="4"  required></ion-input>
       </ion-item>
       <ion-item>
         <ion-label stacked>Confirm New PIN</ion-label>
-        <ion-input type="number" [(ngModel)]="setObj.confirm_pin" name="confirm_pin"  required></ion-input>
+        <ion-input type="password" min="4" max="4" [(ngModel)]="setObj.confirm_pin" name="confirm_pin"  required></ion-input>
       </ion-item>      
 	      
 	      <div padding>

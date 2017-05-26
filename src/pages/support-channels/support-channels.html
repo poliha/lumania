@@ -16,17 +16,15 @@
 
   <ion-list >
     <button ion-item (click)="contactForm()">
+      <ion-icon name="mail" item-left></ion-icon>
       Send us a message
     </button>
-  	
-    <ion-item text-wrap>
-      Email: support@lumania.tech
-    </ion-item>
-    <ion-item text-wrap>
-      Telephone: 
-    </ion-item>
-    <ion-item text-wrap>
-      Live Chat: Coming Soon.
+
+    <ion-item text-wrap (click)="joinWhatsappGroup()">
+      <ion-avatar item-left>
+          <img src="assets/img/whatsapp.png">
+      </ion-avatar>
+      Join WhatsApp Group 
     </ion-item>
 
 

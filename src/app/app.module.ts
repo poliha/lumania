@@ -3,6 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { CloudSettings, CloudModule } from '@ionic/cloud-angular';
 import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
 import { IonicStorageModule } from '@ionic/storage';
+import { Contacts} from '@ionic-native/contacts';
 // import { AppConfig }       from './app.config';
 
 import { Http } from '@angular/http';
@@ -14,7 +15,7 @@ import { Signup } from '../pages/signup/signup';
 import { PasswordReset } from '../pages/password-reset/password-reset';
 import { Dashboard } from '../pages/dashboard/dashboard';
 import { Rates } from '../pages/rates/rates';
-import { Contacts } from '../pages/contacts/contacts';
+import { ContactsPage } from '../pages/contacts/contacts';
 import { Wallet } from '../pages/wallet/wallet';
 import { News } from '../pages/news/news';
 import { Profile } from '../pages/profile/profile';
@@ -36,6 +37,11 @@ import { SupportChannels } from '../pages/support-channels/support-channels';
 import { AccountVerification } from '../pages/account-verification/account-verification';
 import { BankDetails } from '../pages/bank-details/bank-details';
 import { ContactForm } from '../pages/contact-form/contact-form';
+import { ClaimLumensPage } from '../pages/claim-lumens/claim-lumens';
+import { ViewContactPage } from '../pages/view-contact/view-contact';
+import { EditContactPage } from '../pages/edit-contact/edit-contact';
+import { AddContactPage } from '../pages/add-contact/add-contact';
+
 
 
 import { AuthService } from '../providers/auth-service';
@@ -53,6 +59,7 @@ import { File } from '@ionic-native/file';
 import { Transfer } from '@ionic-native/transfer';
 import { FilePath } from '@ionic-native/file-path';
 import { Camera } from '@ionic-native/camera';
+import { InAppBrowser } from '@ionic-native/in-app-browser';
 
 
 import { StatusBar } from '@ionic-native/status-bar';
@@ -77,7 +84,7 @@ let pages = [
     PasswordReset,
     Dashboard,
     Rates,
-    Contacts,
+    ContactsPage,
     Wallet,
     News,
     Profile,
@@ -98,15 +105,22 @@ let pages = [
     SupportChannels,
     AccountVerification,
     BankDetails,
-    ContactForm
+    ContactForm,
+    ClaimLumensPage,
+    ViewContactPage,
+    EditContactPage,
+    AddContactPage
   ];
 
 let configOptions = {
-  production: false,
+  production: true,
+  stellarProduction: false,
   defaultCurrency: 'NGN',
   stellarLiveNetwork: 'https://testnet.stellar.org',
   stellarTestNetwork: 'https://horizon-testnet.stellar.org',
-  currencyList: ['NGN','USD','EUR','CNY','UGX','ZAR','BWP','INR','KES','GHS','TZS','RWF']
+  currencyList: ['NGN','USD','EUR','GBP','ZAR','KES','GHS'],
+  apiLiveUrl: 'http://lumania.tech:8888',
+  apiTestUrl: 'http://localhost:8888',
 }
 
 @NgModule({
@@ -115,7 +129,10 @@ let configOptions = {
     BrowserModule,
     IonicModule.forRoot(Lumania, configOptions),
     CloudModule.forRoot(cloudSettings),
-    IonicStorageModule.forRoot(),
+    IonicStorageModule.forRoot({
+      name: '__mydb',
+      driverOrder: ['sqlite', 'websql', 'indexeddb']
+    }),
     TranslateModule.forRoot({
       provide: TranslateLoader,
       useFactory: (createTranslateLoader),
@@ -142,6 +159,8 @@ let configOptions = {
     Transfer,
     Camera,
     FilePath,
+    InAppBrowser,
+    Contacts
   ]
 })
 export class AppModule {}

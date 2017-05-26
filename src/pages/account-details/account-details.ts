@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { AuthService } from '../../providers/auth-service';
 import { Utility } from '../../providers/utility';
+import { Storage } from '@ionic/storage';
 
 
 @IonicPage()
@@ -10,11 +11,11 @@ import { Utility } from '../../providers/utility';
   templateUrl: 'account-details.html',
 })
 export class AccountDetails {
-	account: any = {};
+	account:any = {};
 	skey: any = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXX';
 	hideSkey = true;
   constructor(public navCtrl: NavController, public navParams: NavParams,
-  	public authService: AuthService, public utility: Utility) {
+  	public authService: AuthService, public utility: Utility, public storage: Storage) {
   }
 
   ionViewDidLoad() {
@@ -28,7 +29,14 @@ export class AccountDetails {
 
 
   getAccountDetails(){
-  	this.account = this.authService.getAccount();
+    this.storage.get('account_details_'+this.authService.getUuid())
+    .then((account)=>{
+      this.account = account;
+    },
+      (err)=>{
+
+    })
+  	
   }
 
   showSecretKey(){

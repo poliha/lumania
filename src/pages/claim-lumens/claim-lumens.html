@@ -1,0 +1,37 @@
+<!--
+  Generated template for the ClaimLumensPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>Claim Lumens</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content>
+	<ion-list>
+    <ion-item *ngFor="let m of messages"  text-wrap>
+      {{m}}
+
+    </ion-item>
+		<form (submit)="claimLumens()">
+		    <ion-list>
+
+		      <ion-item>
+		        <ion-label stacked>Enter Claim Code</ion-label>
+		        <ion-input type="text" [(ngModel)]="claim_code" name="claim_code"  required></ion-input>
+		      </ion-item>
+		      <div padding>
+		        <button ion-button color="primary" block>Claim Lumens</button>
+		      </div>
+
+		    </ion-list>
+	  </form>
+  </ion-list>
+
+</ion-content>

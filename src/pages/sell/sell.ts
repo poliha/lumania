@@ -9,6 +9,7 @@ import { StellarService } from '../../providers/stellar-sdk';
 import { AlertService } from '../../providers/alert-service';
 import { Storage } from '@ionic/storage';
 import { ChangePin } from '../change-pin/change-pin';
+import { BankDetails } from '../bank-details/bank-details';
 
 
 @IonicPage()
@@ -23,11 +24,12 @@ export class Sell {
   rates: any = {};
   pin: any = "";
   currentRate: any = 1;
-  xlmAmount = 0.00;
-  fiatAmount = 0.00;
+  xlmAmount: any;
+  fiatAmount:any;
   sendCurrency = 'XLM';
   recvCurrency = 'NGN';
   currencyList = [];
+  bank_details:any ;
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public config: Config,
     public loadingService: LoadingService, public utility: Utility,	public lapi: Lapi,
@@ -51,8 +53,8 @@ export class Sell {
 
     // this.getBalance();
     this.getRates();
-
-    this.checkPin();
+    this.checkBankAccount();
+    // this.checkPin();
   }
 
   checkPin(){
@@ -67,6 +69,28 @@ export class Sell {
             text: 'Ok',
             handler: () => {
               this.navCtrl.push(ChangePin);
+            }
+          }
+        ]
+      });
+      
+      alert.present();
+    }
+  }
+
+  checkBankAccount(){
+    if (this.authService.getData('bank_details')) {
+      this.bank_details = this.authService.getData('bank_details');
+      return true;
+    } else {
+        let alert = this.alertCtrl.create({
+        title: 'Set Bank Details',
+        message: 'You have no bank details for set',
+        buttons: [
+          {
+            text: 'Set Bank Details',
+            handler: () => {
+              this.navCtrl.push(BankDetails);
             }
           }
         ]
@@ -169,6 +193,7 @@ export class Sell {
   }
 
   sell(){
+    // check balance before selling?
   	this.paymentService.sellLumens(this.fiatAmount, this.xlmAmount, this.recvCurrency, this.currentRate, this.currentAccountId, this.pin);
   }
 

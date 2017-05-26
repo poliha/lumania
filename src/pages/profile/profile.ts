@@ -10,6 +10,8 @@ import { AccountRecovery } from '../account-recovery/account-recovery';
 import { SupportChannels } from '../support-channels/support-channels';
 import { AccountVerification } from '../account-verification/account-verification';
 import { BankDetails } from '../bank-details/bank-details';
+import { AccountDetails } from '../account-details/account-details';
+import { ClaimLumensPage } from '../claim-lumens/claim-lumens';
 
 
 /**
@@ -61,6 +63,14 @@ export class Profile {
 
   bankDetails(){
     this.navCtrl.push(BankDetails);
+  }
+
+  accountDetails(){
+    this.navCtrl.push(AccountDetails);
+  }
+
+  claimLumens(){
+    this.navCtrl.push(ClaimLumensPage);
   }
 
   verifyAccount(){

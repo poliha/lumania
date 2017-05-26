@@ -4,6 +4,7 @@ import { Login } from '../login/login';
 import { Signup } from '../signup/signup';
 import { AuthService } from '../../providers/auth-service';
 import { Dashboard } from '../dashboard/dashboard';
+// import { SplashScreen } from '@ionic-native/splash-screen';
 
 /**
  * Generated class for the Welcome page.
@@ -18,7 +19,8 @@ import { Dashboard } from '../dashboard/dashboard';
 })
 export class Welcome {
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public authService: AuthService) {
+  constructor( public navCtrl: NavController, public navParams: NavParams, public authService: AuthService) {
+   // splashScreen.hide();
     if (this.authService.isLoggedIn()) { 
       this.navCtrl.push(Dashboard);
     } else {

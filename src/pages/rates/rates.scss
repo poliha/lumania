@@ -1,3 +1,15 @@
 page-rates {
-
+	td,th{
+		width: 33%;
+		padding: 8px;
+		min-height: 60px;
+	}
+	tr{
+		background-color: #fff;
+		border-bottom: 1px solid #27caf7;
+	}
+	.no-border{
+		background-color: #f3f3f3;
+		border-bottom: none;
+	}
 }

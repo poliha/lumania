@@ -9,6 +9,7 @@ import { FilePath } from '@ionic-native/file-path';
 import { Camera } from '@ionic-native/camera';
 import { Lapi } from '../../providers/lapi';
 import { AlertService } from '../../providers/alert-service';
+import { Config } from 'ionic-angular';
 
 declare var cordova: any;
 
@@ -26,14 +27,16 @@ export class ProfileEdit {
   };
   selectedImage: string;
    lastImage: string = null;
+   url: string;
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
     private camera: Camera, private transfer: Transfer,  public toastCtrl: ToastController,
     private file: File, private filePath: FilePath,  public loadingService: LoadingService,
     public actionSheetCtrl: ActionSheetController, public lapi: Lapi,
-    public platform: Platform, public alertService: AlertService,
+    public platform: Platform, public alertService: AlertService, public config: Config,
   	public chooseImageCtrl: PopoverController, public authService: AuthService) {
      this.getDetails();
+     this.url = this.config.get('production') ? this.config.get('apiLiveUrl') : this.config.get('apiTestUrl');
   }
 
   ionViewDidLoad() {
@@ -139,7 +142,7 @@ export class ProfileEdit {
 
   public uploadImage() {
     // Destination URL
-    var url = "http://yoururl/upload.php";
+    var url =  this.url+"/upload/image";
    
     // File for Upload
     var targetPath = this.pathForImage(this.lastImage);
@@ -152,7 +155,11 @@ export class ProfileEdit {
       fileName: filename,
       chunkedMode: false,
       mimeType: "multipart/form-data",
-      params : {'fileName': filename}
+      params : {'fileName': filename,
+                'uploadType': 1, //upload type: 1,2 or 3.. profile, passport, passportHolding
+                'token': this.authService.getLapiToken(),
+                'uuid': this.authService.getUuid() }, 
+      headers : {'Authorization': 'Bearer ' + this.authService.getLapiToken()}
     };
    
     const fileTransfer: TransferObject = this.transfer.create();
@@ -163,11 +170,15 @@ export class ProfileEdit {
     // Use the FileTransfer to upload the image
     fileTransfer.upload(targetPath, url, options).then(data => {
       this.loadingService.hideAll();
+      console.log(data);
       this.presentToast('Image succesful uploaded.');
+      this.navCtrl.pop();
     }, err => {
+      console.log(err);
       this.loadingService.hideAll();
       this.presentToast('Error while uploading file.');
     });
+
   }
 
 
@@ -184,35 +195,43 @@ export class ProfileEdit {
   }
 
   doEdit(){
-    let name = this.account.firstname+" "+this.account.surname;
-    let options = {
-        'firstname': this.account.firstname,
-        'surname': this.account.surname,
-        'email': this.account.email,
-        'token': this.authService.getLapiToken(),
-        'uuid': this.authService.getUuid()
-    };
 
-    this.authService.saveProfileData(name, this.account.email)
-        .then(()=>{
+    if (this.lastImage) { 
+      this.uploadImage();
+    } else {
+      this.alertService.basicAlert("Success", "Data Saved" ,"Ok");
+      this.navCtrl.pop();
+    }
 
-          this.lapi.saveProfileData(options)
-            .map(res => res.json())
-            .subscribe((resp) => {
-                  console.log(resp);
-                  this.alertService.basicAlert("Success", resp.content.message.join('. ') ,"Ok");
+    // let name = this.account.firstname+" "+this.account.surname;
+    // let options = {
+    //     'firstname': this.account.firstname,
+    //     'surname': this.account.surname,
+    //     'email': this.account.email,
+    //     'token': this.authService.getLapiToken(),
+    //     'uuid': this.authService.getUuid()
+    // };
 
-             },
-             (err:any)=>{
-              // to do add toast
-                  console.log(err.json());
-                  let errorObj = err.json();
-                  this.alertService.basicAlert("Error", errorObj.content.message.join('. ') ,"Ok");
+    // this.authService.saveProfileData(name, this.account.email)
+    //     .then(()=>{
 
-            });
+    //       this.lapi.saveProfileData(options)
+    //         .map(res => res.json())
+    //         .subscribe((resp) => {
+    //               console.log(resp);
+    //               this.alertService.basicAlert("Success", resp.content.message.join('. ') ,"Ok");
+
+    //          },
+    //          (err:any)=>{
+    //           // to do add toast
+    //               console.log(err.json());
+    //               let errorObj = err.json();
+    //               this.alertService.basicAlert("Error", errorObj.content.message.join('. ') ,"Ok");
+
+    //         });
 
 
-        })
+    //     })
 
   }
 }

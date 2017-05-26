@@ -3,6 +3,7 @@ import { IonicPage, NavController, AlertController, NavParams } from 'ionic-angu
 import { PaymentService } from '../../providers/payment-service';
 import { AuthService } from '../../providers/auth-service';
 import { Lapi } from '../../providers/lapi';
+import { Utility } from '../../providers/utility';
 import { LoadingService } from '../../providers/loading-service';
 
 import { StellarService } from '../../providers/stellar-sdk';
@@ -18,7 +19,7 @@ export class Send {
 	
 	balances: any = [];
   currentAccountId: any = false;
-  xlmAmount = 0.00;
+  xlmAmount: any;
   destAcct: any = "";
   currentBalance = 0.00;
   displayBalance = 0.00;
@@ -28,10 +29,14 @@ export class Send {
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public loadingService: LoadingService,
   	public lapi: Lapi, 	public paymentService: PaymentService,public alertService: AlertService, 
-  	public stellarService: StellarService, public authService: AuthService, public alertCtrl: AlertController
+  	public stellarService: StellarService, public authService: AuthService, 
+    public utility: Utility, public alertCtrl: AlertController
   ) {
 
     this.currentAccountId = this.authService.getAccountId();
+    this.destAcct = this.navParams.get('destAcct') || '';
+    this.xlmAmount = this.navParams.get('xlmAmount');
+    this.calculateXLM(this.xlmAmount);
   }
 
   ionViewDidLoad() {
@@ -77,6 +82,7 @@ export class Send {
           this.balances = account.balances;
           this.currentBalance = this.balances[0].balance;
           this.displayBalance = this.balances[0].balance;
+          this.calculateXLM(this.xlmAmount);
         })
         .catch((error)=>{
 
@@ -101,7 +107,7 @@ export class Send {
 
   send(){
   	this.loadingService.showLoader("Sending...");
-  	if ((this.xlmAmount - 20) >= parseFloat(this.balances[0].balance)) {
+  	if (this.displayBalance >= 20) {
         let body = {
             "pin": this.pin,
             "token": this.authService.getLapiToken(),
@@ -114,7 +120,9 @@ export class Send {
             .subscribe((resp) => {
               console.log(resp);
 
-              switch (this.address_type) {
+              let addressType = this.utility.getAddressType(this.destAcct);
+              console.log(addressType);
+              switch (addressType) {
                 case 1:
                               // send lumens
                   this.stellarService.sendLumens(this.destAcct, this.xlmAmount)
@@ -122,7 +130,12 @@ export class Send {
 
                     this.loadingService.hideLoader();
                     this.alertService.basicAlert("Success", this.xlmAmount+"XLM sent" ,"Ok");
-
+                    this.navCtrl.pop();
+                  })
+                  .catch((error)=>{
+                    console.log(error);
+                    this.loadingService.hideLoader();
+                    this.alertService.basicAlert("Error", error.message ,"Ok");
                   });
 
                   break;
@@ -132,7 +145,12 @@ export class Send {
 
                     this.loadingService.hideLoader();
                     this.alertService.basicAlert("Success", this.xlmAmount+"XLM sent" ,"Ok");
+                    this.navCtrl.pop();
 
+                  }).catch((error)=>{
+                    console.log(error);
+                    this.loadingService.hideLoader();
+                    this.alertService.basicAlert("Error", error.message ,"Ok");
                   });
 
                   break;
@@ -140,10 +158,15 @@ export class Send {
                 case 3:
                   this.stellarService.sendLumensViaEmail(this.destAcct, this.xlmAmount,this.pin)
                   .then((result)=>{
-
+                    console.log(result);
                     this.loadingService.hideLoader();
                     this.alertService.basicAlert("Success", this.xlmAmount+"XLM sent" ,"Ok");
+                    this.navCtrl.pop();
 
+                  }).catch((error)=>{
+                    console.log(error);
+                    this.loadingService.hideLoader();
+                    this.alertService.basicAlert("Error", error.message ,"Ok");
                   });
 
                   break;

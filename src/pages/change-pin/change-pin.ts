@@ -54,6 +54,7 @@ export class ChangePin {
               console.log(resp);
               this.alertService.basicAlert("Success", resp.content.message.join('. ') ,"Ok");
               this.authService.saveData('pin', true);
+              this.navCtrl.pop();
 
          },
          (err:any)=>{
@@ -87,6 +88,7 @@ export class ChangePin {
               console.log(resp);
               this.alertService.basicAlert("Success", resp.content.message.join('. ') ,"Ok");
               this.authService.saveData('pin', true);
+              this.navCtrl.pop();
 
          },
          (err:any)=>{

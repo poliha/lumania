@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, App } from 'ionic-angular';
 import { AuthService } from '../../providers/auth-service';
-import { Welcome } from '../welcome/welcome';
+// import { Welcome } from '../welcome/welcome';
 import { Rates } from '../rates/rates';
-import { Contacts } from '../contacts/contacts';
+import { ContactsPage } from '../contacts/contacts';
 import { Wallet } from '../wallet/wallet';
 import { News } from '../news/news';
 import { Profile } from '../profile/profile';
@@ -23,7 +23,7 @@ import { Profile } from '../profile/profile';
 export class Dashboard {
 
   tab1Root = Rates;
-  tab2Root = Contacts;
+  tab2Root = ContactsPage;
   tab3Root = Wallet;
   tab4Root = News;
   tab5Root = Profile;

@@ -4,6 +4,7 @@ import { AuthService } from '../../providers/auth-service';
 import { Lapi } from '../../providers/lapi';
 import { LoadingService } from '../../providers/loading-service';
 import { AlertService } from '../../providers/alert-service';
+import { InAppBrowser } from '@ionic-native/in-app-browser';
 
 
 @IonicPage()
@@ -16,16 +17,18 @@ export class News {
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
   	public loadingService: LoadingService, public lapi: Lapi, public alertService: AlertService,
-  	public authService: AuthService) {
+  	public authService: AuthService, private iab: InAppBrowser) {
   	  let opts = {
         "token": this.authService.getLapiToken(),
         "uuid":  this.authService.getUuid(),
 
       };
+      this.loadingService.showLoader("Loading News...");
 
   	this.lapi.getNews(opts)
   	      .map(res => res.json())
           .subscribe((resp) => {
+            this.loadingService.hideLoader();
                 console.log(resp);
                 this.newsList = resp.content.data;
 
@@ -44,6 +47,10 @@ export class News {
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad News');
+  }
+
+  load(url){
+    this.iab.create(url,"_self");
   }
 
 

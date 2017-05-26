@@ -15,23 +15,30 @@
 
 <ion-content>
 	<div margin-top></div>
-	<ion-list margin-top>
+	<ion-list margin-top no-lines>
 
       <ion-item>
         <ion-input color="primary" type="number" [(ngModel)]="amount"
-        (input)='onInput($event.target.value)'  placeholder="Amount"></ion-input>
+        (input)='onInput($event.target.value)'  placeholder="Enter Amount"></ion-input>
+
         <ion-select [(ngModel)]="currency" (ionChange)="calculateXLM()">
-          <ion-option *ngFor="let c of currencyList">{{c}}</ion-option>
+          <ion-option *ngFor="let c of currencyList" value="{{c}}">
+
+            {{c}}
+
+          </ion-option>
 		    </ion-select>
       </ion-item>
 
       <ion-item>
-        In XLM: {{lumens_amount}}
+        <ion-avatar item-left>
+           <img src="assets/img/XLM.png">
+        </ion-avatar> XLM: {{lumens_amount}}
       </ion-item>
 
       <ion-item>
-        <ion-label fixed>Enter PIN</ion-label>
-        <ion-input color="primary" type="number" [(ngModel)]="pin" placeholder="PIN"></ion-input>
+        <!-- <ion-label fixed>Enter PIN</ion-label> -->
+        <ion-input color="primary" type="password" [(ngModel)]="pin" placeholder="Enter PIN" min="4" max="4"></ion-input>
       </ion-item>
   </ion-list>
 

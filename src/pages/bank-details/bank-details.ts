@@ -122,13 +122,14 @@ export class BankDetails {
       }
       this.bank_details = body;
       console.log(this.bank_details);
-    this.storage.set('bank_details', body);
+    this.storage.set('bank_details_'+this.authService.getUuid(), body);
     this.authService.saveData('bank_details', body)
     		.then(()=>{
 
     			this.loadingService.hideLoader();
     			this.toastService.showToast("Bank details saved");
           this.isset_bank = true;
+          this.navCtrl.pop();
 
     		});
 

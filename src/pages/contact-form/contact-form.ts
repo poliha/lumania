@@ -46,7 +46,7 @@ export class ContactForm {
          (err:any)=>{
         	// to do add toast
               console.log(err.json());
-              let errorObj = err.json();
+              // let errorObj = err.json();
               this.toastService.showToast("Message Not Sent");
 
         });

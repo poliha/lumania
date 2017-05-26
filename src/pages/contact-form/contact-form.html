@@ -14,15 +14,15 @@
 
 
 <ion-content>
-  <ion-list>
+  <ion-list no-lines>
     <ion-item>
-      <ion-label fixed>Subject</ion-label>
+      <ion-label stacked>Subject</ion-label>
       <ion-input type="text" [(ngModel)]="message.subject" name="subject"></ion-input>
     </ion-item>
 
     <ion-item>
-      <ion-label fixed>Message</ion-label>
-      <ion-input type="text" [(ngModel)]="message.content" name="content"></ion-input>
+      <ion-label stacked>Message</ion-label>
+      <ion-textarea type="text" [(ngModel)]="message.content" name="content"></ion-textarea>
     </ion-item>
 
       <div padding>

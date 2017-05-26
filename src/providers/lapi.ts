@@ -7,22 +7,26 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/toPromise';
 import { Storage } from '@ionic/storage';
+import { Config } from 'ionic-angular';
 
 /*
   Generated class for the Lapi provider.
 
   Lapi: Lumania API
   local storage variables
-    -account_details
+    -account_details_[user_id]
     -rates
 */
 @Injectable()
 export class Lapi {
 	// url: string = 'http://localhost:8888/';
-  url: string = 'http://lumania.tech:8888';
+  // url: string = 'http://lumania.tech:8888';
+  url: string;
 
   constructor(public http: Http, public authService: AuthService, public api: Api,
-    public storage: Storage) {
+    public storage: Storage, public config: Config) {
+    this.url = this.config.get('production') ? this.config.get('apiLiveUrl') : this.config.get('apiTestUrl');
+    console.log("url",this.url);
     console.log('Hello Lapi Provider');
   }
 
@@ -67,6 +71,18 @@ export class Lapi {
         .catch((error:any) => Observable.throw(error.json().error || 'Server error')); //...errors if any
     return seq;
   }
+
+  saveSellTx(txInfo: any){
+    // add authorization header with jwt token
+    let headers = new Headers({ 'Authorization': 'Bearer ' + this.authService.getLapiToken() });
+    let options = new RequestOptions({ headers: headers });
+
+    let seq = this.api.post('transaction/save_sell', txInfo, options);
+    seq.map(res => res.json())
+        .catch((error:any) => Observable.throw(error.json().error || 'Server error')); //...errors if any
+    return seq;
+  }
+
 
 
   contactForm(txInfo: any){
@@ -119,7 +135,20 @@ export class Lapi {
     let options = new RequestOptions({ headers: headers });
 
     let seq = this.api.post('lumens/sell', txObj, options);
-    seq.map(res => res.json());
+    seq.map(res => res.json())
+       .catch((error:any) => Observable.throw(error.json().error || 'Server error')); //...errors if any
+
+    return seq;
+  }
+
+  claimLumens(txObj: any){
+    // add authorization header with jwt token
+    let headers = new Headers({ 'Authorization': 'Bearer ' + this.authService.getLapiToken() });
+    let options = new RequestOptions({ headers: headers });
+
+    let seq = this.api.post('lumens/claim', txObj, options);
+    seq.map(res => res.json())
+       .catch((error:any) => Observable.throw(error.json().error || 'Server error')); //...errors if any
 
     return seq;
   }

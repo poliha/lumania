@@ -11,13 +11,22 @@
 	<ion-grid>
 	  <ion-row>
 	    <ion-col>
-	      <button ion-button color="primary" (click)="showPaymentPage()" block>{{ 'BUY_BUTTON' | translate }}</button>
+	      <button ion-button color="primary" (click)="showPaymentPage()" block>
+	      	<ion-icon name="lumbuy"></ion-icon>
+	      	{{ 'BUY_BUTTON' | translate }}
+	      </button>
 	    </ion-col>
 	    <ion-col>
-	      <button ion-button color="primary" (click)="sendPage()" block>{{ 'SEND_BUTTON' | translate }}</button>
+	      <button ion-button color="primary" (click)="sendPage()" block>
+	      	<ion-icon name="lumsend"></ion-icon>
+	      	{{ 'SEND_BUTTON' | translate }}
+	      </button>
 	    </ion-col>
 	    <ion-col>
-	      <button ion-button color="primary"(click)="sellPage()" block>{{ 'SELL_BUTTON' | translate }}</button>
+	      <button ion-button color="primary"(click)="sellPage()" block>
+	      	<ion-icon name="lumsell"></ion-icon>
+	      	{{ 'SELL_BUTTON' | translate }}
+	      </button>
 	    </ion-col>
 	  </ion-row>
 	</ion-grid>
@@ -49,9 +58,11 @@
 
 
 	<ion-list>
-	  <ion-list-header>
-	    Current Balance
-	  </ion-list-header>
+	  <ion-item-divider>
+      <ion-title>Current Balance</ion-title>
+    </ion-item-divider>
+
+
 	  <div *ngIf="!authService.user.get('account')">
 	  	<button (click)="showPaymentPage()" ion-item>No account. Buy Lumens </button>
 	  </div>
@@ -61,17 +72,20 @@
 	  		XLM <b>{{balance.balance | number:'1.5-8'}}</b>
 
 	  		<ion-avatar item-left>
-          <img src="{{authService.user.details.image}}">
+          <img src="assets/img/XLM.png">
       	</ion-avatar>
+
 	  	</ion-item>
+
 	  </div>
 	</ion-list>
 
 	<!-- Balance Equivalent -->
 	<ion-list>
-	  <ion-list-header>
-	    Balance Equivalent
-	  </ion-list-header>
+	  <ion-item-divider>
+      <ion-title>Balance Equivalent</ion-title>
+    </ion-item-divider>
+
 	  <div *ngIf="!authService.user.get('account')">
 	  	<button (click)="showPaymentPage()" ion-item>No account. Buy Lumens </button>
 		  
@@ -81,7 +95,7 @@
 	  		{{eb.asset_type}} <b>{{eb.balance | number:'1.5-8' }}</b>
 
 	  		<ion-avatar item-left>
-          <img src="{{authService.user.details.image}}">
+          <img src="assets/img/{{eb.asset_type}}.png">
       	</ion-avatar>
 	  	</ion-item>
 

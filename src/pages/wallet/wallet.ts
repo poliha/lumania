@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController, AlertController, NavParams } from 'ionic-angular';
 import { VerifyEmail } from '../verify-email/verify-email';
 import { PaymentMethod } from '../payment-method/payment-method';
+import { AccountRecovery } from '../account-recovery/account-recovery';
 import { AuthService } from '../../providers/auth-service';
 import { Lapi } from '../../providers/lapi';
 import { LoadingService } from '../../providers/loading-service';
@@ -31,7 +32,8 @@ export class Wallet {
   equivalentBalances: any = [];
   constructor(public navCtrl: NavController, public navParams: NavParams, public alertService: AlertService ,
     public stellarService: StellarService, public utility: Utility, public storage: Storage,
-  	public authService: AuthService, public lapi: Lapi, public loadingService: LoadingService) {
+  	public authService: AuthService, public lapi: Lapi,
+    public alertCtrl: AlertController, public loadingService: LoadingService) {
     this.currentAccountId = this.authService.getAccountId();
     
   }
@@ -44,10 +46,11 @@ export class Wallet {
 
   ionViewWillEnter(){
     console.log('getting balance');
-
-    // this.getBalance();
+    this.currentAccountId = this.authService.getAccountId();
+    this.getBalance();
     this.getRates();
-    // this.calculateBalances();
+    this.calculateBalances();
+    this.checkForSeed();
 
   }
 
@@ -65,7 +68,43 @@ export class Wallet {
     this.navCtrl.push(Sell);
   }
 
+  checkForSeed(){
+    this.currentAccountId = this.authService.getAccountId();
+    if (this.currentAccountId) {
+      this.storage.get('account_details_'+this.authService.getUuid())
+      .then((data) => {
+          if (data) { 
+            console.log("account details retrieved",data);
+          } else {
+            // no details found recover account
+              let alert = this.alertCtrl.create({
+              title: 'Recover Account',
+              message: 'Account details no found on device. You will be unable to perform any transactions. Please recover your account',
+              buttons: [
+                  {
+                    text: 'Ok',
+                    handler: () => {
+                      this.navCtrl.push(AccountRecovery);
+                    }
+                  }
+                ]
+              });
+            
+            alert.present();
+          }
+
+      },
+       (err) => {
+
+      });
+
+    } else {
+      // code...
+    }
+  }
+
   getBalance(){
+    this.currentAccountId = this.authService.getAccountId();
 
     if (this.currentAccountId) {
       this.stellarService.getBalance(this.currentAccountId)
@@ -126,10 +165,10 @@ export class Wallet {
         
         //       });
     } else {
-      this.balances.push({
+      this.balances = [{
         "balance": "0.00",
         "asset_type": "native"
-    })
+      }];
       
     }
   }
@@ -148,14 +187,14 @@ export class Wallet {
       for (var prop in this.rates) {
         if (prop !== 'timestamp') {
           if (prop !== 'USDXLM') {
-            let currencyPairValue = this.utility.round((parseFloat(this.rates.USDXLM) * parseFloat(this.rates[prop])),7);
+            let currencyPairValue = this.utility.round( (lumen_balance * (parseFloat(this.rates[prop]) / parseFloat(this.rates.USDXLM))),7);
             equivBal.push({
               "balance": currencyPairValue,
               "asset_type": prop.substring(0,3)
             });
           }else{
             equivBal.push({
-              "balance": this.rates.USDXLM,
+              "balance":  this.utility.round((lumen_balance * (1/this.rates.USDXLM)),7),
               "asset_type": prop.substring(0,3)
             });
           }

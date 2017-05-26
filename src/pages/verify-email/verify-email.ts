@@ -46,7 +46,8 @@ export class VerifyEmail {
       .then(()=>{
         this.showToast("Email verified successfully");
         // navigate to dashboard
-        this.navCtrl.push(Dashboard);
+        // this.navCtrl.push(Dashboard);
+        this.navCtrl.pop();
       })
       .catch((err)=>{
         console.log(err);

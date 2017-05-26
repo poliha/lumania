@@ -8,17 +8,36 @@
 
   <ion-navbar>
     <ion-title>Contacts</ion-title>
+        <ion-buttons end>
+          <button ion-button icon-only (click)="add()">
+            <ion-icon name="add-circle"></ion-icon>
+          </button>
+        </ion-buttons>
   </ion-navbar>
 
 </ion-header>
 
 
 <ion-content>
-	<ion-list>
-    <span *ngFor="let contact of contactlist" >
-      <ion-item *ngIf="contact.displayName">
-          {{contact.displayName}} = {{contact.phoneNumbers[0].value}}
+  <ion-searchbar [(ngModel)]="searchTerm" [formControl]="searchControl" (ionInput)="onSearchInput()"></ion-searchbar>
+  <div *ngIf="searching" class="spinner-container">
+     <ion-spinner></ion-spinner>
+  </div>
+	<ion-list [virtualScroll]="contactList">
+
+ 
+      <ion-item *virtualItem="let contact" (click)="viewContact(contact)" approxItemHeight="60px" approxItemWidth="100%">
+        <ion-avatar item-left *ngIf="contact.photo">
+          <ion-img src="{{contact.photo}}"></ion-img>
+        </ion-avatar>
+        <ion-avatar item-left *ngIf="!contact.photo">
+          <ion-img src="assets/img/XLM.png"></ion-img>
+        </ion-avatar>
+        <div *ngIf="contact.displayName"  text-capitalize>{{contact.displayName}}</div>
+        <div *ngIf="!contact.displayName">{{contact.email}}</div>
+          
       </ion-item>
-    </span>
+      
+    
   </ion-list>
 </ion-content>

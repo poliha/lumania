@@ -67,23 +67,45 @@ export class AccountRecovery {
   	let recoveryKey = this.key1+" "+this.key2+" "+this.key3+" "+this.key4+" "+this.key5+" "+this.key6;
 
     if (this.selectedAccount) { 
-      this.stellarService.linkRecoveredAccount(this.selectedAccount, recoveryKey).then((account)=>{
-        console.log("account", account);
 
-        if (!account) { 
-          this.alertService.basicAlert("Oops!", "Invalid Keys" ,"Ok");
-        } else {
-          this.account = account;
-          this.alertService.basicAlert("Congrats!", "Account linked successfully" ,"Ok");
+      for (var i = 0; i < this.accounts.length; ++i) {
+        console.log("sA", this.selectedAccount);
+        console.log("aai", this.accounts[i].account_id);
+        if (this.selectedAccount == this.accounts[i].account_id) {
+          this.account = {"account_id": this.accounts[i].account_id,
+                          "salt": this.accounts[i].seed_salt,
+                          "iv": this.accounts[i].seed_iv,
+                          "text": this.accounts[i].seed_text};
         }
-        
-      })
-      .catch((err) => {
-        this.alertService.basicAlert("Oops!", "Invalid Keys" ,"Ok");
-        console.log('I get called:', err.message); // I get called: 'Something awful happened'
-      });
+      }
+
+      if (this.account) { 
+        console.log(this.account);
+        this.stellarService.linkRecoveredAccount(this.account, recoveryKey).then((account)=>{
+          console.log("account", account);
+
+          if (!account) { 
+            this.alertService.basicAlert("Oops!", "Invalid Keys" ,"Ok");
+          } else {
+            this.account = account;
+            this.alertService.basicAlert("Congrats!", "Account linked successfully" ,"Ok");
+            this.navCtrl.pop();
+          }
+
+        })
+        .catch((err) => {
+          this.alertService.basicAlert("Oops!", "Invalid Keys" ,"Ok");
+          console.log('I get called:', err.message); // I get called: 'Something awful happened'
+        });
+
+      } else {
+        console.log(this.account);
+        this.alertService.basicAlert("Heads Up!", "Account not in your records" ,"Ok");
+      }
+
     } else {
-      // code...
+
+      this.alertService.basicAlert("Heads Up!", "Select account" ,"Ok");
     }
 
   }

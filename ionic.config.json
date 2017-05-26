@@ -1,6 +1,5 @@
 {
   "name": "Lumania",
   "app_id": "76eb94b4",
-  "v2": true,
-  "typescript": true
+  "type": "ionic-angular"
 }

@@ -16,17 +16,20 @@ import { AlertService } from '../../providers/alert-service';
 })
 
 export class Signup {
-	account: {firstname: string, surname: string, email: string, password: string} = {
+	account = {
 		'email': "",
   	'password': "",
   	'firstname': "",
-    'surname': ""
+    'surname': "",
+    'country': "",
+    'phone': "",
   };
 
   loading: any;
   alert: any;
   messages: any = [];
   auth_code: any;
+  countries: any;
   constructor(public navCtrl: NavController, public navParams: NavParams, 
     public alertCtrl: AlertController, public alertService: AlertService,
     public loadingCtrl: LoadingController, public authService: AuthService, 
@@ -38,6 +41,9 @@ export class Signup {
     } else {
       console.log("nt auth");
     }
+
+    this.countries = this.utility.getCountries();
+
   }
 
   ionViewDidLoad() {
@@ -80,7 +86,8 @@ export class Signup {
   		'name': this.account.firstname+" "+this.account.surname,
       'custom' : {
         'accounts': false,
-        'gender': false,
+        'country': this.account.country,
+        'phone': this.account.phone,
         'email_auth_code': this.auth_code,
         'email_verified': false,
         'pin': false,
@@ -120,6 +127,8 @@ export class Signup {
           acctInfo.email = this.account.email;
           acctInfo.auth_code = this.auth_code;
           acctInfo.password  = this.account.password;
+          acctInfo.country = this.account.country;
+          acctInfo.phone = this.account.phone;
 
           this.lapi.signUp(acctInfo)
             .map(res => res.json())

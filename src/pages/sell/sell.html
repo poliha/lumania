@@ -14,7 +14,7 @@
 
 <ion-content>
 	<div margin-top></div>
-	<ion-list margin-top>
+	<ion-list margin-top  no-lines>
 			<ion-item>
 				<ion-title>Sell</ion-title>
 				<small>You have XLM <b>{{currentBalance | number:'1.5-8'}}</b></small>
@@ -49,9 +49,12 @@
       <ion-item>
         Rate: {{currentRate  | number:'1.5-8'}}
       </ion-item>
+      <ion-item color="danger" text-wrap *ngIf="bank_details">
+        Recepient: {{bank_details.account_name}} | {{bank_details.account_number}} | {{bank_details.bank_name}}
+      </ion-item>
       <ion-item>
-        <ion-label fixed>Enter PIN</ion-label>
-        <ion-input color="primary" type="number" [(ngModel)]="pin" placeholder="PIN"></ion-input>
+        <!-- <ion-label fixed>Enter PIN</ion-label> -->
+        <ion-input color="primary" type="password" min="4" max="4"  [(ngModel)]="pin" placeholder="Enter PIN"></ion-input>
       </ion-item>
   </ion-list>
 

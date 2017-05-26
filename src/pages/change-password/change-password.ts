@@ -44,6 +44,7 @@ export class ChangePassword {
         .subscribe((resp) => {
               console.log(resp);
               this.alertService.basicAlert("Success", resp.content.message.join('. ') ,"Ok");
+              this.navCtrl.pop();
 
          },
          (err:any)=>{

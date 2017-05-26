@@ -1,13 +1,8 @@
-<!--
-  Generated template for the AccountVerification page.
 
-  See http://ionicframework.com/docs/components/#navigation for more info on
-  Ionic pages and navigation.
--->
 <ion-header>
 
   <ion-navbar>
-    <ion-title>Account Verification</ion-title>
+    <ion-title>Additional Information</ion-title>
     <ion-buttons end>
       <button ion-button icon-only (click)="save()">
         <ion-icon name="checkmark"></ion-icon>
@@ -19,14 +14,9 @@
 
 
 <ion-content>
-  <ion-list>
-    <ion-item text-wrap>
-      <span  color="primary">
-      	Information needed for regulatory purpose
-      </span>
-    </ion-item>
+  <ion-list  no-lines>
   	<ion-item-divider>
-      <ion-title>Tier 1 Verification</ion-title>
+      <ion-title>Tier 1</ion-title>
       Limit per Transaction $50
     </ion-item-divider>
     <ion-item>
@@ -45,67 +35,50 @@
     </ion-item>
 
     <ion-item>
-	    <ion-label stacked>Gender</ion-label>
-	    <ion-select [(ngModel)]="verifyObj.gender">
-	          <ion-option value="female">Female</ion-option>
-	          <ion-option value="male">Male</ion-option>
-			</ion-select>
-		</ion-item>
+        <ion-label stacked>{{'COUNTRY' | translate}}</ion-label>
+        <ion-input type="text" [(ngModel)]="verifyObj.country" name="country"></ion-input>
+    </ion-item>
+
 		<ion-item>
-        <ion-label stacked>Contact Number</ion-label>
+        <ion-label stacked>{{'PHONE' | translate}}</ion-label>
         <ion-input type="tel" [(ngModel)]="verifyObj.phone" name="phone"></ion-input>
-    </ion-item>
-
-    <ion-item>
-        <ion-label stacked>City of Birth</ion-label>
-        <ion-input type="text" [(ngModel)]="verifyObj.birth_city" name="birth_city"></ion-input>
-    </ion-item>
-
-    <ion-item>
-        <ion-label stacked>Country of Birth</ion-label>
-        <ion-input type="text" [(ngModel)]="verifyObj.birth_country" name="birth_country"></ion-input>
-    </ion-item>
-
-		<ion-item>
-        <ion-label stacked>Address</ion-label>
-        <ion-textarea [(ngModel)]="verifyObj.address" name="address"></ion-textarea>
     </ion-item>
 
 
     <ion-item-divider>
-      <ion-title>Tier 2 Verification</ion-title>
+      <ion-title>Tier 2</ion-title>
       Limit per Transaction $2500
     </ion-item-divider>
+
+    <ion-item>
+        <ion-label stacked>Address</ion-label>
+        <ion-textarea [(ngModel)]="verifyObj.address" name="address"></ion-textarea>
+    </ion-item>
+
 
     <ion-item>
         <ion-label stacked>Passport No</ion-label>
         <ion-input type="text" [(ngModel)]="verifyObj.passport_no" name="passport_no"></ion-input>
     </ion-item>
 
-    <ion-item>
-        <ion-label stacked>Upload Passport</ion-label>
-        <ion-input type="text" [(ngModel)]="verifyObj.passport_no" name="passport_no"></ion-input>
+    <ion-item text-wrap>
+      Upload Passport
     </ion-item>
 
     <ion-item>
-        <ion-label stacked>Upload an image of you holding the passport</ion-label>
-        <ion-input type="text" [(ngModel)]="verifyObj.passport_no" name="passport_no"></ion-input>
+        <!-- <ion-label stacked>Upload Passport</ion-label> -->
+        <img (click)="presentActionSheet(1)" style=" height: 100px;" src="{{verifyObj.passport_page}}" [hidden]="lastImage !== null"/>
+        <img src="{{pathForImage(lastImage)}}" style="height: 100px" [hidden]="lastImage === null">
     </ion-item>
 
-
-    <ion-item-divider>
-      <ion-title>Tier 3 Verification</ion-title>
-      Limit per Transaction $2500+
-    </ion-item-divider>
-
-
+    <ion-item text-wrap>
+      Upload an image of you holding the passport
+    </ion-item>
     <ion-item>
-	    <ion-label stacked>Sender Category</ion-label>
-	    <ion-select [(ngModel)]="verifyObj.gender">
-	          <ion-option value="business">Business</ion-option>
-	          <ion-option value="political person">Politically exposed persons</ion-option>
-			</ion-select>
-		</ion-item>
+        <!-- <ion-label stacked>Upload an image of you holding the passport</ion-label> -->
+        <img (click)="presentActionSheet(2)" style=" height: 100px;" src="{{verifyObj.holding_passport}}" [hidden]="lastImage2 !== null" item-center>
+        <img src="{{pathForImage(lastImage2)}}" style="height: 100px" [hidden]="lastImage2 === null" item-center>
+    </ion-item>
 
   </ion-list>
 
