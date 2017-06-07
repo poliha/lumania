@@ -134,7 +134,7 @@ export class StellarService {
 
     if (!keypair) {
       return new Promise<void>((resolve, reject) => {
-        reject(new Error("Something awful happened"));
+        reject(new Error("Invalid Secret Key"));
       });
     } else {
 
@@ -290,6 +290,93 @@ export class StellarService {
 
   getBalance(accountId){
    return this.server.accounts().accountId(accountId ).call();
+
+  }
+
+  transferLumens(skey, destAcct, amountToSend, memo?: any){
+
+    let messages = [];
+    let uuid = this.authService.getUuid();
+    let stellarAccount: any;
+    let destAcctActive = 0;
+    let senderKeypair: any;
+    let asset = this.generateAsset(0);
+    let memoText = memo || '';
+
+    senderKeypair = StellarSdk.Keypair.fromSecret(skey);
+    return this.server.loadAccount(destAcct)
+    .catch((error) =>{
+      console.log(error);
+      if (error.name === 'NotFoundError' || error.data.status == '404') {
+        // unable to load dest account
+        // messages.push(' Account not active');
+        console.error('Destination Account not active');
+        destAcctActive = 0;
+      }else{
+        throw new Error("Could not get source account");
+
+      }
+
+    })
+    .then((receiver) => {
+      console.log("receiver: ", receiver);
+      if (receiver) {
+        console.log("its active oo");
+        destAcctActive = 1;
+
+      }
+      // load source acct
+      return this.server.loadAccount(senderKeypair.publicKey());
+    })
+    .catch((error) => {
+      console.log(error);
+      if (error.name === 'NotFoundError' || error.data.status == '404') {
+        // unable to load source account
+        messages.push('Source Account not active');
+        console.error('Something went wrong! The source account does not exist!');
+        throw new Error('The source account does not exist!');
+      }else{
+        throw new Error(error.message);
+      }
+    })
+    .then((sender) => {
+      // build a transaction based on if dest was found or not
+      console.log("sender", sender);
+      let transaction: any;
+      if (destAcctActive == 1) {
+      transaction = new StellarSdk.TransactionBuilder(sender)
+                        .addOperation(StellarSdk.Operation.payment({
+                          destination: destAcct,
+                          asset: asset,
+                          amount: amountToSend.toString()
+                        }))
+                        .addMemo(StellarSdk.Memo.text(memoText))
+                        .build();
+      }
+      if (destAcctActive === 0) {
+        transaction = new StellarSdk.TransactionBuilder(sender)
+                          .addOperation(StellarSdk.Operation.createAccount({
+                            destination: destAcct,
+                            startingBalance: amountToSend.toString()
+                          }))
+                          .addMemo(StellarSdk.Memo.text(memoText))
+                          .build();
+      }
+
+      // sign transaction
+      transaction.sign(senderKeypair);
+
+      return this.server.submitTransaction(transaction);
+
+    })
+    .catch((error) => {
+      console.error('Something went wrong at the end\n', error);
+      messages.push('Could not complete Transaction:\n'+error.message);
+
+      return new Promise<void>((resolve, reject) => {
+        reject(new Error(messages.join('. ')));
+      });
+    });
 
   }
 

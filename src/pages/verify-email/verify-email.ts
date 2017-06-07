@@ -2,12 +2,7 @@ import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, ToastController } from 'ionic-angular';
 import { AuthService } from '../../providers/auth-service';
 import { Dashboard } from '../dashboard/dashboard';
-/**
- * Generated class for the VerifyEmail page.
- *
- * See http://ionicframework.com/docs/components/#navigation for more info
- * on Ionic pages and navigation.
- */
+
 @IonicPage()
 @Component({
   selector: 'page-verify-email',
@@ -16,12 +11,9 @@ import { Dashboard } from '../dashboard/dashboard';
 export class VerifyEmail {
 
 	auth_code: string = "";
+
   constructor(public navCtrl: NavController, public navParams: NavParams,
   	private toastCtrl: ToastController, public authService: AuthService) {
-  }
-
-  ionViewDidLoad() {
-    console.log('ionViewDidLoad VerifyEmail');
   }
 
   showToast(m) {
@@ -41,12 +33,11 @@ export class VerifyEmail {
   verifyEmailCode(){
   	let resp = this.authService.verifyEmail(this.auth_code);
   	if (resp) {
-  		// 
+
       this.authService.saveData('email_verified', true)
       .then(()=>{
         this.showToast("Email verified successfully");
-        // navigate to dashboard
-        // this.navCtrl.push(Dashboard);
+
         this.navCtrl.pop();
       })
       .catch((err)=>{
@@ -55,7 +46,7 @@ export class VerifyEmail {
       });
 
   	} else {
-  		// toast error
+
   		this.showToast("Verification failed");
   	}
   }

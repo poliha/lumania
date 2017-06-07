@@ -84,7 +84,7 @@ export class ProfileEdit {
       saveToPhotoAlbum: false,
       correctOrientation: true
     };
-   
+
     // Get the data of an image
     this.camera.getPicture(options).then((imagePath) => {
       // Special handling for Android library
@@ -112,7 +112,7 @@ export class ProfileEdit {
     newFileName =  n + ".jpg";
     return newFileName;
   }
-   
+
   // Copy the image to a local folder
   private copyFileToLocalDir(namePath, currentName, newFileName) {
     this.file.copyFile(namePath, currentName, cordova.file.dataDirectory, newFileName).then(success => {
@@ -121,7 +121,7 @@ export class ProfileEdit {
       this.presentToast('Error while storing file.');
     });
   }
-   
+
   private presentToast(text) {
     let toast = this.toastCtrl.create({
       message: text,
@@ -130,7 +130,7 @@ export class ProfileEdit {
     });
     toast.present();
   }
-   
+
   // Always get the accurate path to your apps folder
   public pathForImage(img) {
     if (img === null) {
@@ -143,13 +143,13 @@ export class ProfileEdit {
   public uploadImage() {
     // Destination URL
     var url =  this.url+"/upload/image";
-   
+
     // File for Upload
     var targetPath = this.pathForImage(this.lastImage);
-   
+
     // File name only
     var filename = this.lastImage;
-   
+
     var options = {
       fileKey: "file",
       fileName: filename,
@@ -158,17 +158,32 @@ export class ProfileEdit {
       params : {'fileName': filename,
                 'uploadType': 1, //upload type: 1,2 or 3.. profile, passport, passportHolding
                 'token': this.authService.getLapiToken(),
-                'uuid': this.authService.getUuid() }, 
+                'uuid': this.authService.getUuid() },
       headers : {'Authorization': 'Bearer ' + this.authService.getLapiToken()}
     };
-   
+
     const fileTransfer: TransferObject = this.transfer.create();
-   
+
     this.loadingService.showLoader('Uploading...');
-    
-   
+
+
     // Use the FileTransfer to upload the image
     fileTransfer.upload(targetPath, url, options).then(data => {
+
+      console.log(data);
+      let userObj = JSON.parse(data.response);
+      console.log(userObj);
+      // save image url to ionic
+      this.authService.user.details.image = userObj.content.data.profile_image;
+      return this.authService.saveUser();
+    }, err => {
+
+      console.log(err);
+      this.loadingService.hideAll();
+      this.presentToast('Error while uploading file.');
+
+    })
+    .then(data => {
       this.loadingService.hideAll();
       console.log(data);
       this.presentToast('Image succesful uploaded.');
@@ -196,7 +211,7 @@ export class ProfileEdit {
 
   doEdit(){
 
-    if (this.lastImage) { 
+    if (this.lastImage) {
       this.uploadImage();
     } else {
       this.alertService.basicAlert("Success", "Data Saved" ,"Ok");

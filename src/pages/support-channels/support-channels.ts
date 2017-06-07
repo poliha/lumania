@@ -1,13 +1,8 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { ContactForm } from '../contact-form/contact-form';
+import { InAppBrowser } from '@ionic-native/in-app-browser';
 
-/**
- * Generated class for the SupportChannels page.
- *
- * See http://ionicframework.com/docs/components/#navigation for more info
- * on Ionic pages and navigation.
- */
 @IonicPage()
 @Component({
   selector: 'page-support-channels',
@@ -15,11 +10,8 @@ import { ContactForm } from '../contact-form/contact-form';
 })
 export class SupportChannels {
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
-  }
-
-  ionViewDidLoad() {
-    console.log('ionViewDidLoad SupportChannels');
+  constructor(public navCtrl: NavController, public navParams: NavParams,
+     private iab: InAppBrowser) {
   }
 
   contactForm(){
@@ -27,7 +19,9 @@ export class SupportChannels {
   }
 
   joinWhatsappGroup(){
-    
+    // whatsapp chat group
+    let url = 'https://chat.whatsapp.com/A9uwS2hVLryJ7yJQo0ozxm';
+    this.iab.create(url,"_system");
   }
 
 }

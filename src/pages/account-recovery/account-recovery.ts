@@ -12,12 +12,8 @@ import { StellarService } from '../../providers/stellar-sdk';
   templateUrl: 'account-recovery.html',
 })
 export class AccountRecovery {
-	key1 = "";
-	key2 = "";
-	key3 = "";
-	key4 = "";
-	key5 = "";
-	key6 = "";
+
+  recovery_code = "";
   accounts: any = [];
   account: any;
   selectedAccount: any = 0;
@@ -64,7 +60,16 @@ export class AccountRecovery {
   	// recover on lapi
   	// encrypt of device
   	// store on device
-  	let recoveryKey = this.key1+" "+this.key2+" "+this.key3+" "+this.key4+" "+this.key5+" "+this.key6;
+  	// let rmvSpace = this.recovery_code.replace(" ", "");
+   //  console.log(this.recovery_code);
+   //  console.log(rmvSpace);
+   //  let recoveryArray = [];
+   //  for (let i = 0; i < rmvSpace.length; i+6) {
+   //    let end = i+6;
+   //    recoveryArray.push(rmvSpace.substring(i,end));
+   //  }
+   //  console.log(recoveryArray);
+   //  let recoveryKey = this.key1+" "+this.key2+" "+this.key3+" "+this.key4+" "+this.key5+" "+this.key6;
 
     if (this.selectedAccount) { 
 
@@ -81,7 +86,7 @@ export class AccountRecovery {
 
       if (this.account) { 
         console.log(this.account);
-        this.stellarService.linkRecoveredAccount(this.account, recoveryKey).then((account)=>{
+        this.stellarService.linkRecoveredAccount(this.account, this.recovery_code).then((account)=>{
           console.log("account", account);
 
           if (!account) { 

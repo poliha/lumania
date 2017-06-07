@@ -22,6 +22,10 @@
       <ion-item>
         <ion-input color="primary" type="text" [(ngModel)]="destAcct"
         placeholder="Email or Stellar Public Key"></ion-input>
+        <button ion-button  item-right icon-only (click)="showContacts()">
+          <ion-icon name="contacts"></ion-icon>
+        </button>
+        <!-- <ion-button item-right name="contacts" (click)="showContacts()"></ion-button> -->
       </ion-item>
 
       <!-- <ion-item>

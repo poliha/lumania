@@ -3,6 +3,7 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { Lapi } from '../../providers/lapi';
 import { AuthService } from '../../providers/auth-service';
 import { ToastService } from '../../providers/toast-service';
+import { LoadingService } from '../../providers/loading-service';
 
 
 @IonicPage()
@@ -17,7 +18,8 @@ export class ContactForm {
   };
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
-  	public lapi: Lapi, public toastService: ToastService, public authService: AuthService) {
+  	public lapi: Lapi,  public loadingService: LoadingService,
+    public toastService: ToastService, public authService: AuthService) {
   }
 
   ionViewDidLoad() {
@@ -25,6 +27,7 @@ export class ContactForm {
   }
 
   send(){
+    this.loadingService.showLoader("Sending message...");
   	let options = {
   			'subject': this.message.subject,
   			'content': this.message.content,
@@ -38,16 +41,17 @@ export class ContactForm {
   			.map(res => res.json())
   			.subscribe((resp) => {
               console.log(resp);
-              
+              this.loadingService.hideLoader();
               this.toastService.showToast("Message Sent");
+              this.navCtrl.pop();
 
 
          },
          (err:any)=>{
-        	// to do add toast
-              console.log(err.json());
-              // let errorObj = err.json();
-              this.toastService.showToast("Message Not Sent");
+        	this.loadingService.hideLoader();
+          console.log(err.json());
+          // let errorObj = err.json();
+          this.toastService.showToast("Message Not Sent");
 
         });
   }

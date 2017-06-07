@@ -9,7 +9,7 @@ export class ContactService {
   constructor(private contacts: Contacts, public storage: Storage) {
     console.log('Hello ContactService Provider');
         // this.platform.ready().then(() => {
-      this.findAll();
+      // this.findAll();
     // });
   }
 
@@ -48,17 +48,6 @@ export class ContactService {
                 tempContact.publicKey = contacts[i].emails[j].value;
               }
             }
-
-
-          // if(contacts[i].categories){
-          //   for (var j = 0; j < contacts[i].categories.length; ++j) {
-          //     if(contacts[i].categories[j].type === 'stellar_public_key'){
-          //       tempContact.publicKey = contacts[i].categories[j].value;
-          //     }
-          //   }
-          // }
-
-
 
           this.contactList.push(tempContact);
         }

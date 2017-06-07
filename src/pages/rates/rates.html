@@ -8,6 +8,11 @@
 
   <ion-navbar>
     <ion-title>XLM Rates</ion-title>
+    <ion-buttons end>
+      <button ion-button icon-only (click)="supportChannels()">
+        <ion-icon name="help-circle"></ion-icon>
+      </button>
+    </ion-buttons>
   </ion-navbar>
 
 </ion-header>
@@ -28,18 +33,18 @@
 			</tr>
 		</thead>
 		<tr *ngFor="let r of ratesObj">
-			<td>
-				<button ion-button item-left color="dark" clear>
+			<td style="width:50%;">
+				<button ion-button color="dark" clear>
 					<ion-avatar item-left>
           <img src="assets/img/{{r.currency}}.png">
       	</ion-avatar> &nbsp; {{ r.currency }}
 				</button>
 			</td>
 			<td>
-				<button ion-button (click)="buyPage(r.currency,r.buy)" color="primary" clear>{{ r.buy | number:'1.5-5' }}</button>
+				<button ion-button (click)="buyPage(r.currency,r.buy)" color="primary" clear>{{ r.buy | number:'1.7-7' }}</button>
 			</td>
 			<td>
-				<button ion-button (click)="sellPage(r.currency,r.sell)" color="danger" clear>{{ r.sell | number:'1.5-5' }}</button>
+				<button ion-button (click)="sellPage(r.currency,r.sell)" color="danger" clear>{{ r.sell | number:'1.7-7' }}</button>
 			</td>
 		</tr>
 	</table>

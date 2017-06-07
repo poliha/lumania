@@ -3,13 +3,6 @@ import { IonicPage, NavController, NavParams, ViewController } from 'ionic-angul
 import { AuthService } from '../../providers/auth-service';
 import { Welcome } from '../welcome/welcome';
 
-
-/**
- * Generated class for the ProfileMenu page.
- *
- * See http://ionicframework.com/docs/components/#navigation for more info
- * on Ionic pages and navigation.
- */
 @IonicPage()
 @Component({
   selector: 'page-profile-menu',
@@ -19,10 +12,6 @@ export class ProfileMenu {
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
   	public viewCtrl: ViewController, public authService: AuthService) {
-  }
-
-  ionViewDidLoad() {
-    console.log('ionViewDidLoad ProfileMenu');
   }
 
   logout(){

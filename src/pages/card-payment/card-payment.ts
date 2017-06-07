@@ -7,6 +7,7 @@ import { LoadingService } from '../../providers/loading-service';
 import { Storage } from '@ionic/storage';
 import { AuthService } from '../../providers/auth-service';
 import { ChangePin } from '../change-pin/change-pin';
+import { Wallet } from '../wallet/wallet';
 
 @IonicPage()
 @Component({
@@ -20,6 +21,7 @@ export class CardPayment {
   currencyList = [];
   rates: any = {};
   lumens_amount = 0.00;
+  btc_address:any;
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public storage: Storage,
     public utility: Utility,  public lapi: Lapi, public alertCtrl: AlertController,
@@ -65,7 +67,26 @@ export class CardPayment {
   }
 
   pay(){
-  	this.paymentService.raveCheckout(this.amount, this.currency, this.lumens_amount, this.pin);
+    if (this.currency === 'BTC') { 
+      // btc payment
+      // check pin, get btc address, save tx in database, return btc address to user
+      this.paymentService.btcCheckout(this.amount, this.currency, this.lumens_amount, this.pin)
+      .then((response:any)=>{
+        console.log(response);
+        this.btc_address = response.content.data.btc_address;
+      })
+      .catch((err)=>{
+        console.log(err);
+      });
+
+    } else {
+      this.paymentService.raveCheckout(this.amount, this.currency, this.lumens_amount, this.pin);
+    }
+
+  }
+
+  btcPaid(){
+    this.navCtrl.setRoot(Wallet);
   }
 
   getRates(){
@@ -94,12 +115,19 @@ export class CardPayment {
     if (!this.amount) { 
       this.lumens_amount = 0.00;
     } else {
-      if (this.currency === 'USD') { 
-        this.lumens_amount = this.utility.round((this.amount*this.rates.USDXLM),7);
-      } else {
-        let target = this.currency+'XLM';
-        this.lumens_amount = this.utility.round(( (this.amount/this.rates[target])*this.rates.USDXLM), 7);
+
+      for (var i = 0; i < this.rates.length; i++) {
+        if (this.rates[i].currency === this.currency) {
+          this.lumens_amount = this.utility.round((this.amount/this.rates[i].buy),7);
+        }
       }
+
+      // if (this.currency === 'USD') {
+      //   this.lumens_amount = this.utility.round((this.amount*this.rates.USDXLM),7);
+      // } else {
+      //   let target = this.currency+'XLM';
+      //   this.lumens_amount = this.utility.round(( (this.amount/this.rates[target])*this.rates.USDXLM), 7);
+      // }
     }
 
 
@@ -111,18 +139,24 @@ export class CardPayment {
       this.lumens_amount = 0.00;
     } else {
 
-      if (this.currency === 'USD') { 
-        let temp = ( parseFloat(this.amount)*parseFloat(this.rates.USDXLM));
-        console.log("temp", temp);
-        this.lumens_amount = this.utility.round(temp,7);
-        console.log("calculateinput", value, this.currency, this.amount, this.lumens_amount, this.rates.USDXLM);
-      } else {
-        let target = this.currency+'XLM';
-        let temp = (parseFloat(this.amount)/parseFloat(this.rates[target]))*parseFloat(this.rates.USDXLM);
-        console.log("temp", temp);
-        this.lumens_amount = this.utility.round(temp, 7);
-        console.log("calculateinput", value, this.currency, this.amount, this.lumens_amount, this.rates.USDXLM, this.rates[target]);
+      for (var i = 0; i < this.rates.length; i++) {
+        if (this.rates[i].currency === this.currency) {
+          this.lumens_amount = this.utility.round((this.amount*this.rates[i].buy),7);
+        }
       }
+
+      // if (this.currency === 'USD') { 
+      //   let temp = ( parseFloat(this.amount)*parseFloat(this.rates.USDXLM));
+      //   console.log("temp", temp);
+      //   this.lumens_amount = this.utility.round(temp,7);
+      //   console.log("calculateinput", value, this.currency, this.amount, this.lumens_amount, this.rates.USDXLM);
+      // } else {
+      //   let target = this.currency+'XLM';
+      //   let temp = (parseFloat(this.amount)/parseFloat(this.rates[target]))*parseFloat(this.rates.USDXLM);
+      //   console.log("temp", temp);
+      //   this.lumens_amount = this.utility.round(temp, 7);
+      //   console.log("calculateinput", value, this.currency, this.amount, this.lumens_amount, this.rates.USDXLM, this.rates[target]);
+      // }
     }
 
   }

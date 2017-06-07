@@ -24,12 +24,12 @@ export class Signup {
     'country': "",
     'phone': "",
   };
-
   loading: any;
   alert: any;
   messages: any = [];
   auth_code: any;
   countries: any;
+
   constructor(public navCtrl: NavController, public navParams: NavParams, 
     public alertCtrl: AlertController, public alertService: AlertService,
     public loadingCtrl: LoadingController, public authService: AuthService, 
@@ -38,17 +38,12 @@ export class Signup {
     this.auth_code = this.utility.randomString(6);
     if (this.authService.isLoggedIn()) {
       this.navCtrl.push(Dashboard);
-    } else {
-      console.log("nt auth");
     }
-
+    // load countries array
     this.countries = this.utility.getCountries();
 
   }
 
-  ionViewDidLoad() {
-    console.log('ionViewDidLoad Signup');
-  }
 
   showLoader(){
      this.loading = this.loadingCtrl.create({
@@ -75,9 +70,12 @@ export class Signup {
 
   }
 
-
+  /**
+   * Two step signup process
+   * signs up user via ionic and Lapi
+   *
+   */
   doSignUp(){
-    // show loading message
     this.showLoader();
 
   	let details: UserDetails = {
@@ -94,17 +92,14 @@ export class Signup {
         'kyc_tier': 0
       }
   	};
-  	console.log('details: ', details);
 
+    // sign up via ionic auth
     this.authService.signUp(details)
     .then((resp) => {
-
-      console.log(resp);
 
       if (resp.status === 'error') {
         this.messages = resp.messages;
         throw new Error("error");
-
       }
 
       if (resp.status === 'success') {
@@ -135,24 +130,20 @@ export class Signup {
             .subscribe((resp) => {
               console.log(resp);
 
-              // To do store token
+              //store token in ionic auth user object
               return this.authService.lapiToken(resp.content.data.token);
 
             }, (err) => {
-              // to do add toast
-              // maybe delete user from backend if error occured
+              // to do maybe delete user from backend if error occured
               console.log(err);
               alert(err);
-
             });
-
-
-
       }
     })
     .then(() => {
         // hide loading
         this.loading.dismiss();
+
         // navigate to dashboard
         this.navCtrl.push(Dashboard).catch(err => {
           this.alertService.basicAlert("Error", "Please Login" ,"Ok");

@@ -4,10 +4,9 @@ import { CloudSettings, CloudModule } from '@ionic/cloud-angular';
 import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
 import { IonicStorageModule } from '@ionic/storage';
 import { Contacts} from '@ionic-native/contacts';
-// import { AppConfig }       from './app.config';
-
 import { Http } from '@angular/http';
 
+// Import pages
 import { Lumania } from './app.component';
 import { Welcome } from '../pages/welcome/welcome';
 import { Login } from '../pages/login/login';
@@ -41,9 +40,9 @@ import { ClaimLumensPage } from '../pages/claim-lumens/claim-lumens';
 import { ViewContactPage } from '../pages/view-contact/view-contact';
 import { EditContactPage } from '../pages/edit-contact/edit-contact';
 import { AddContactPage } from '../pages/add-contact/add-contact';
+import { TransferLumensPage } from '../pages/transfer-lumens/transfer-lumens';
 
-
-
+// Import providers
 import { AuthService } from '../providers/auth-service';
 import { Utility } from '../providers/utility';
 import { Api } from '../providers/api';
@@ -51,7 +50,6 @@ import { Lapi } from '../providers/lapi';
 import { PaymentService } from '../providers/payment-service';
 import { LoadingService } from '../providers/loading-service';
 import { AlertService } from '../providers/alert-service';
-// import { Storage } from '@ionic/storage';
 import { StellarService } from '../providers/stellar-sdk';
 import { ContactService } from '../providers/contact-service';
 import { ToastService } from '../providers/toast-service';
@@ -70,12 +68,14 @@ export function createTranslateLoader(http: Http) {
   return new TranslateStaticLoader(http, './assets/i18n', '.json');
 }
 
+// cloud settings for ionic cloud
 const cloudSettings: CloudSettings = {
   'core': {
     'app_id': '76eb94b4'
   }
 };
 
+// array of all pages
 let pages = [
     Lumania,
     Welcome,
@@ -109,17 +109,19 @@ let pages = [
     ClaimLumensPage,
     ViewContactPage,
     EditContactPage,
-    AddContactPage
+    AddContactPage,
+    TransferLumensPage
   ];
 
+// config array
 let configOptions = {
   production: true,
   stellarProduction: false,
   defaultCurrency: 'NGN',
   stellarLiveNetwork: 'https://testnet.stellar.org',
   stellarTestNetwork: 'https://horizon-testnet.stellar.org',
-  currencyList: ['NGN','USD','EUR','GBP','ZAR','KES','GHS'],
-  apiLiveUrl: 'http://lumania.tech:8888',
+  currencyList: ['BTC','NGN','USD','EUR','GBP','ZAR','KES','GHS'],
+  apiLiveUrl: 'https://lumania.tech:8888',
   apiTestUrl: 'http://localhost:8888',
 }
 

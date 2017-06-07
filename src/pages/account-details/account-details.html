@@ -7,7 +7,7 @@
 <ion-header>
 
   <ion-navbar>
-    <ion-title>AccountDetails</ion-title>
+    <ion-title>Account Details</ion-title>
   </ion-navbar>
 
 </ion-header>
@@ -24,7 +24,16 @@
     </ion-item-divider>
 
     <ion-item text-wrap>
-      {{account.account_id}}
+      <ion-textarea id="copyTarget" [value]="account.account_id" readonly>
+        {{account.account_id}}
+      </ion-textarea>
+
+      <!-- <ion-icon item-left name="copy" (click)="copy(account.account_id)"></ion-icon> -->
+      <!-- <ion-icon item-left name="copy" id="cpyBtn" ion-button data-clipboard-target="#copyTarget"></ion-icon> -->
+      <button id="cpyBtn" item-right ion-button data-clipboard-target="#copyTarget">
+        Copy
+      </button>
+
     </ion-item>
 
     <ion-item-divider>

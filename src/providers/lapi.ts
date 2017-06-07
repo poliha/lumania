@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Http, Headers, RequestOptions } from '@angular/http';
 import { Api } from './api';
 import { AuthService } from './auth-service';
+import { Utility } from './utility';
 import { Observable } from 'rxjs/Rx';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
@@ -24,7 +25,7 @@ export class Lapi {
   url: string;
 
   constructor(public http: Http, public authService: AuthService, public api: Api,
-    public storage: Storage, public config: Config) {
+    public storage: Storage, public config: Config, public utility: Utility) {
     this.url = this.config.get('production') ? this.config.get('apiLiveUrl') : this.config.get('apiTestUrl');
     console.log("url",this.url);
     console.log('Hello Lapi Provider');
@@ -60,6 +61,16 @@ export class Lapi {
     return seq;
   }
 
+  saveBtcTx(txInfo: any){
+    // add authorization header with jwt token
+    let headers = new Headers({ 'Authorization': 'Bearer ' + this.authService.getLapiToken() });
+    let options = new RequestOptions({ headers: headers });
+
+    let seq = this.api.post('transaction/save_btc', txInfo, options);
+    seq.map(res => res.json())
+        .catch((error:any) => Observable.throw(error.json().error || 'Server error')); //...errors if any
+    return seq;
+  }
 
   saveEmailTx(txInfo: any){
     // add authorization header with jwt token
@@ -107,6 +118,7 @@ export class Lapi {
         .catch((error:any) => Observable.throw(error.json().error || 'Server error')); //...errors if any
     return seq;
   }
+
   saveAccount(txInfo: any){
     // add authorization header with jwt token
     let headers = new Headers({ 'Authorization': 'Bearer ' + this.authService.getLapiToken() });
@@ -153,6 +165,18 @@ export class Lapi {
     return seq;
   }
 
+  requestLumens(txObj: any){
+    // add authorization header with jwt token
+    let headers = new Headers({ 'Authorization': 'Bearer ' + this.authService.getLapiToken() });
+    let options = new RequestOptions({ headers: headers });
+
+    let seq = this.api.post('lumens/request', txObj, options);
+    seq.map(res => res.json())
+       .catch((error:any) => Observable.throw(error.json().error || 'Server error')); //...errors if any
+
+    return seq;
+  }
+
   getNgnRate(){
     let seq = this.api.get('ngn_usd');
     seq
@@ -182,6 +206,7 @@ export class Lapi {
         .catch((error:any) => Observable.throw(error.json().error || 'Server error')); //...errors if any
     return seq;
   }
+
   changePassword(opts: any){
     // add authorization header with jwt token
     let headers = new Headers({ 'Authorization': 'Bearer ' + this.authService.getLapiToken() });
@@ -273,10 +298,6 @@ export class Lapi {
 
 
   getRates(){
-    // get from localstorage
-    // if false or timestamp diff > 10mins get from remote
-    //store rates locally
-    // return promise to get rates
 
     return this.storage.ready().then(() => {
 
@@ -317,8 +338,55 @@ export class Lapi {
         resp.map(res => res.json()).subscribe((resp) => {
 
           console.log(resp);
+          let localRates = resp.content.data;
+          let tempRatesArray = [];
+          for (var prop in localRates) {
+             if (prop !== 'timestamp') {
+             
+           
+              if (prop !== 'USDXLM') {
 
-          this.storage.set('rates', resp.content.data);
+                if (prop === 'NGNXLM') { 
+                  let base = parseFloat(localRates[prop])/parseFloat(localRates.USDXLM);
+                  let buyValue = this.utility.round((base + (base*0.05)),7);
+                  let sellValue = this.utility.round((base - (base*0.05)),7);
+                  tempRatesArray.push({
+                    "currency": prop.substring(0,3),
+                    "buy": buyValue,
+                    "sell": sellValue,
+                    "base": base
+                  });
+                } else {
+                  // code...
+                  let base = parseFloat(localRates[prop])/parseFloat(localRates.USDXLM);
+                  let buyValue = this.utility.round((base + (base*0.02)),7);
+                  let sellValue = this.utility.round((base - (base*0.02)),7);
+                  tempRatesArray.push({
+                    "currency": prop.substring(0,3),
+                    "buy": buyValue,
+                    "sell": sellValue,
+                    "base": base
+                  });
+                }
+
+              }else{
+                let base = 1/parseFloat(localRates.USDXLM);
+                let buyValue = this.utility.round((base + (base*0.02)),7);
+                let sellValue = this.utility.round((base - (base*0.02)),7);
+                tempRatesArray.push({
+                  "currency": prop.substring(0,3),
+                  "buy": buyValue,
+                  "sell": sellValue,
+                  "base": base
+                });
+              }
+            }
+          }
+          tempRatesArray['timestamp'] = Date.now();
+          this.storage.set('rates', tempRatesArray);
+
+
+
           return this.storage.get('rates');
 
         }, (err) => {
@@ -333,15 +401,10 @@ export class Lapi {
         return this.storage.get('rates');
       }
 
-      
+
     });
 
-    // let seq = this.api.get('rates');
-    // seq
-    //   .map(res => res.json())
-    //   .catch((error:any) => Observable.throw(error.json().error || 'Server error'));
 
-    // return seq;
   }
 
 }

@@ -194,6 +194,10 @@ export class AuthService {
     return req;
   }
 
+  setData(key, value){
+    this.user.set(key, value);
+  }
+
   saveProfileData(name, email){
     let req: any;
     this.user.details.name = name;
@@ -203,6 +207,13 @@ export class AuthService {
     }, (err) => {
 
     });
+
+    return req;
+  }
+
+  saveUser(){
+    let req: any;
+    req = this.user.save();
 
     return req;
   }

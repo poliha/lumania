@@ -22,8 +22,8 @@ declare var initRavePay;
 export class PaymentService {
 
   // Change before going live
-  raveSecretKey = 'FLWSECK-bb971402072265fb156e90a3578fe5e6-X';
-  raveUrl = 'http://flw-pms-dev.eu-west-1.elasticbeanstalk.com/flwv3-pug/getpaidx/api/verify';
+  // raveSecretKey = 'FLWSECK-bb971402072265fb156e90a3578fe5e6-X';
+  // raveUrl = 'http://flw-pms-dev.eu-west-1.elasticbeanstalk.com/flwv3-pug/getpaidx/api/verify';
   lumens_amount = 0;
   // var self = this;
   constructor(public http: Http, public authService: AuthService, public lapi: Lapi,
@@ -52,6 +52,7 @@ export class PaymentService {
       "txRef": txRef,
       "amount": amount,
       "currency": currency,
+      "rcvr": this.authService.getAccountId(),
       "pin": pin,
       "token": this.authService.getLapiToken(),
       "lumens_amount": lumens_amount,
@@ -79,6 +80,44 @@ export class PaymentService {
 
   }
 
+
+
+  btcCheckout(amount, currency, lumens_amount, pin){
+    
+    this.lumens_amount = lumens_amount;
+
+    let txRef = this.utility.getTxRef();
+    let  respObj: any;
+    let  errorObj: any;
+    let saveObj = {
+      "txRef": txRef,
+      "amount": amount,
+      "currency": currency,
+      "pin": pin,
+      "rcvr": this.authService.getAccountId(),
+      "token": this.authService.getLapiToken(),
+      "lumens_amount": lumens_amount,
+      "uuid":  this.authService.getUuid(),
+      "txType": 1
+    };
+
+    return new Promise((resolve, reject) => {
+
+
+    // Todo save txref/amount/lumens_amount in  Lapi here
+      this.lapi.saveBtcTx(saveObj)
+            .map(res => res.json())
+            .subscribe((resp) => {
+              console.log(resp);
+              resolve(resp);
+            }, (err) => {
+              console.log(err.json());
+                reject(err.json());
+            });
+
+    });
+
+  }
 
 
   closeRave(){
@@ -127,6 +166,7 @@ export class PaymentService {
         "token": this.authService.getLapiToken(),
         "uuid":  this.authService.getUuid(),
         "accountId": accountId,
+        "amount": amount,
         "email": this.authService.user.details.email
       }
     // pass account to lapi for crediting

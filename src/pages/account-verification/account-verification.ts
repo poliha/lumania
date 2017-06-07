@@ -31,8 +31,11 @@ export class AccountVerification {
     public actionSheetCtrl: ActionSheetController, public lapi: Lapi,
     public platform: Platform, public alertService: AlertService,
     public authService: AuthService, public config: Config) {
+
     this.verifyObj.holding_passport = 'assets/img/NoImage.png';
     this.verifyObj.passport_page = 'assets/img/NoImage.png';
+    this.verifyObj.reason = "";
+    this.verifyObj.status = 0;
     console.log(this.verifyObj);
     this.url = this.config.get('production') ? this.config.get('apiLiveUrl') : this.config.get('apiTestUrl');
   }
@@ -61,6 +64,10 @@ export class AccountVerification {
 			this.verifyObj.email = this.authService.user.details.email;
       this.verifyObj.phone = this.authService.getData('phone') || '';
       this.verifyObj.country = this.authService.getData('country') || '';
+      this.verifyObj.address = "";
+      this.verifyObj.passport_no = "";
+      this.verifyObj.reason = "";
+      this.verifyObj.status = 0;
 
   	}
   }
@@ -99,7 +106,7 @@ export class AccountVerification {
       saveToPhotoAlbum: false,
       correctOrientation: true
     };
-   
+
     // Get the data of an image
     this.camera.getPicture(options).then((imagePath) => {
       // Special handling for Android library
@@ -127,7 +134,7 @@ export class AccountVerification {
     newFileName =  n + ".jpg";
     return newFileName;
   }
-   
+
   // Copy the image to a local folder
   private copyFileToLocalDir(namePath, currentName, newFileName) {
     this.file.copyFile(namePath, currentName, cordova.file.dataDirectory, newFileName)
@@ -142,7 +149,7 @@ export class AccountVerification {
       this.presentToast('Error while storing file.');
     });
   }
-   
+
   private presentToast(text) {
     let toast = this.toastCtrl.create({
       message: text,
@@ -151,7 +158,7 @@ export class AccountVerification {
     });
     toast.present();
   }
-   
+
   // Always get the accurate path to your apps folder
   public pathForImage(img) {
     if (img === null) {
@@ -164,13 +171,13 @@ export class AccountVerification {
   public uploadImage(xImage, uploadType) {
     // Destination URL
     var url =  this.url+"/upload/image";
-   
+
     // File for Upload
     var targetPath = this.pathForImage(xImage);
-   
+
     // File name only
     var filename = xImage;
-   
+
     var options = {
       fileKey: "file",
       fileName: filename,
@@ -181,17 +188,17 @@ export class AccountVerification {
                 'passport_no': this.verifyObj.passport_no,
                 'uploadType': uploadType, //upload type: 1,2 or 3.. profile, passport, passportHolding
                 'token': this.authService.getLapiToken(),
-                'uuid': this.authService.getUuid() }, 
+                'uuid': this.authService.getUuid() },
       headers : {'Authorization': 'Bearer ' + this.authService.getLapiToken()}
     };
-   
+
     const fileTransfer: TransferObject = this.transfer.create();
-   
+
     this.loadingService.showLoader('Uploading...');
-    
-   
+
+
     // Use the FileTransfer to upload the image
-    return fileTransfer.upload(targetPath, url, options)
+    return fileTransfer.upload(targetPath, url, options);
     // .then(data => {
     //   this.loadingService.hideAll();
     //   this.presentToast('Image succesful uploaded.');
@@ -203,20 +210,42 @@ export class AccountVerification {
 
 
   save(){
-    if (this.lastImage || this.lastImage2 ) { 
+    if (this.lastImage || this.lastImage2 ) {
 
         this.uploadImage(this.lastImage,2).then(
           data => {
-            return this.uploadImage(this.lastImage,3);
-            // this.loadingService.hideAll();
+            console.log(data);
+            return this.uploadImage(this.lastImage2,3);
           },
           err =>{
             console.log(err);
           }
         )
         .then(
+          (data:any) => {
+            console.log(data);
+            // this.presentToast('Data saved.');
+            // update data on ionic
+
+            let userObj = JSON.parse(data.response);
+            console.log(userObj);
+            this.verifyObj.holding_passport = userObj.content.data.passport_holder_image;
+            this.verifyObj.passport_page = userObj.content.data.passport_image;
+            this.verifyObj.reason = "";
+            this.verifyObj.status = 1;
+            // this.authService.setData('verifyStatus', 0);
+            return this.authService.saveData('verifyObj', this.verifyObj);
+          },
+          err =>{
+            this.loadingService.hideAll();
+            console.log(err);
+          }
+        )
+        .then(
           data => {
+            console.log(data);
             this.presentToast('Data saved.');
+            // update data on ionic
             this.loadingService.hideAll();
           },
           err =>{
@@ -233,5 +262,47 @@ export class AccountVerification {
     }
   }
 
+verifyStatusColor(status){
+  let rtnText = ""
+  switch (status) {
+    case 1:
+      rtnText = 'primary';
+      break;
+    case 2:
+      rtnText = 'secondary';
+      break;
+    case 3:
+      rtnText = 'danger';
+      break;
+
+    default:
+      rtnText = 'primary';
+      break;
+  }
+
+  return rtnText;
+}
+
+verifyStatusText(status){
+  let rtnText = ""
+  switch (status) {
+    case 1:
+      rtnText = 'Processing';
+      break;
+
+    case 2:
+      rtnText = 'Aprroved';
+      break;
+    case 3:
+      rtnText = 'Rejected: '+this.verifyObj.reason;
+      break;
+
+    default:
+      rtnText = 'Processing';
+      break;
+  }
+
+  return 'Status: '+rtnText;
+}
 
 }

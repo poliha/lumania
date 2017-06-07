@@ -77,5 +77,11 @@
   "SAVE_BUTTON": "Save",
   "BUY_BUTTON": "BUY",
   "SEND_BUTTON": "SEND",
-  "SELL_BUTTON": "SELL"
+  "SELL_BUTTON": "SELL",
+  "ERROR_TITLE": "Error",
+  "ERROR_TITLE_1": "Oops!",
+  "WARNING_TITLE": "Heads Up!",
+  "INVALID_SECRET": "Invalid Secret Key",
+  "NO_ACCOUNT_ERROR": "Account details no found on device. You will be unable to perform any transactions. Please recover your account",
+  "TRANSACTION_SUCCESS": "Transaction successful"
 }

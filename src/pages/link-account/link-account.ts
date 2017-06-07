@@ -4,6 +4,7 @@ import { StellarService } from '../../providers/stellar-sdk';
 import { LoadingService } from '../../providers/loading-service';
 import { AlertService } from '../../providers/alert-service';
 import { AuthService } from '../../providers/auth-service';
+import { Wallet } from '../wallet/wallet';
 
 @IonicPage()
 @Component({
@@ -13,7 +14,7 @@ import { AuthService } from '../../providers/auth-service';
 export class LinkAccount {
 	skey:any  = "";
 	account:any  =  {};
-  constructor(public navCtrl: NavController, public navParams: NavParams,  
+  constructor(public navCtrl: NavController, public navParams: NavParams,
   	public alertService: AlertService, public authService: AuthService,
   	public loadingService: LoadingService,	public stellarService: StellarService ) {
   }
@@ -34,24 +35,26 @@ export class LinkAccount {
 
   doLinking(){
 
-  	if (this.account) { 
+  	if (this.account) {
   		this.alertService.basicAlert("Heads Up!", "You already have an account active. Unable to link account" ,"Ok");
   	} else {
-
+      this.loadingService.showLoader("Linking account...");
   		this.stellarService.linkAccount(this.skey).then((account)=>{
         console.log("account", account);
-
-        if (!account) { 
+        this.loadingService.hideLoader();
+        if (!account) {
         	this.alertService.basicAlert("Oops!", "Invalid Secret Key" ,"Ok");
         } else {
         	this.account = account;
         	this.alertService.basicAlert("Congrats!", "Account linked successfully" ,"Ok");
+          this.navCtrl.setRoot(Wallet);
         }
-        
+
       })
       .catch((err) => {
+        this.loadingService.hideLoader();
       	this.alertService.basicAlert("Oops!", "Invalid Secret Key" ,"Ok");
-    		console.log('I get called:', err.message); // I get called: 'Something awful happened'
+
 			});
 
   	}

@@ -14,8 +14,8 @@ import { ContactService } from '../providers/contact-service';
 export class Lumania {
   rootPage:any = Welcome;
 
-  constructor(translate: TranslateService, platform: Platform, 
-    statusBar: StatusBar, splashScreen: SplashScreen, public lapi: Lapi, 
+  constructor(translate: TranslateService, platform: Platform,
+    statusBar: StatusBar, splashScreen: SplashScreen, public lapi: Lapi,
     public contactService: ContactService) {
     // Set the default language for translation strings, and the current language.
     translate.setDefaultLang('en');
@@ -28,30 +28,22 @@ export class Lumania {
       splashScreen.hide();
     });
 
+    // get rates on app load
     this.lapi.getRates()
         .then((resp)=>{
-        // this.loadingService.hideLoader();
         console.log(resp);
-        // this.rates = resp;
-        // this.getBalance();
-
-        // this.calculateBalances();
       })
       .catch((err) => {
-          // this.loadingService.hideLoader();
-          // to do add toast
-          console.log("error",err);
-  
+        console.log("error",err);
       });
 
-    this.contactService.findAll().then((contacts)=>{
+      // access contacts from phonebook on app load
+      this.contactService.findAll().then((contacts)=>{
 
-    })
-    .catch((err) => {
-        // this.loadingService.hideLoader();
-        // to do add toast
-        console.log("error",err);
-
+    },
+    (err) => {
+      console.log("error",err);
     });
+
   }
 }

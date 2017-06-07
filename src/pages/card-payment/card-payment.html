@@ -14,8 +14,8 @@
 
 
 <ion-content>
-	<div margin-top></div>
-	<ion-list margin-top no-lines>
+	<div margin-top [hidden]="btc_address">
+	   <ion-list margin-top no-lines>
 
       <ion-item>
         <ion-input color="primary" type="number" [(ngModel)]="amount"
@@ -40,11 +40,21 @@
         <!-- <ion-label fixed>Enter PIN</ion-label> -->
         <ion-input color="primary" type="password" [(ngModel)]="pin" placeholder="Enter PIN" min="4" max="4"></ion-input>
       </ion-item>
-  </ion-list>
+    </ion-list>
 
-  <div padding>
-	  <button ion-button color="primary" block (click)="pay()" >Pay</button>
-	  
+    <div padding>
+  	  <button ion-button color="primary" block (click)="pay()" >Pay</button>
+  	  
+    </div>
   </div>
+
+  <div padding [hidden]="!btc_address">
+    <h3>Please pay {{amount}}BTC to the address below</h3>
+    <p>Address: {{btc_address}}</p>
+    <p>Your XLM balance will be credited after 6 confirmations</p>
+    <button ion-button color="primary" block (click)="btcPaid()" >I have Paid</button>
+  </div>
+
+
 
 </ion-content>

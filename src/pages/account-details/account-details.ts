@@ -3,6 +3,9 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { AuthService } from '../../providers/auth-service';
 import { Utility } from '../../providers/utility';
 import { Storage } from '@ionic/storage';
+import { ToastService } from '../../providers/toast-service';
+import * as Clipboard from 'clipboard/dist/clipboard.min.js';
+
 
 
 @IonicPage()
@@ -14,8 +17,12 @@ export class AccountDetails {
 	account:any = {};
 	skey: any = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXX';
 	hideSkey = true;
+  clipboard: any;
   constructor(public navCtrl: NavController, public navParams: NavParams,
-  	public authService: AuthService, public utility: Utility, public storage: Storage) {
+  	public authService: AuthService, public toastService: ToastService,
+    public utility: Utility, public storage: Storage) {
+    this.clipboard = new Clipboard('#cpyBtn');
+    this.clipboard.on('success', () => this.toastService.showToast("Copied!"));
   }
 
   ionViewDidLoad() {
@@ -52,5 +59,15 @@ export class AccountDetails {
   sendPublicKeyAsEmail(){
 
   }
+
+  // copy(text){
+  //   this.clipboard.copy('Hello world')
+  //   .then((data)=>{
+  //     console.log("copied:", data);
+  //     this.toastService.showToast("Copied "+text+"!");
+  //   })
+
+    
+  // }
 
 }

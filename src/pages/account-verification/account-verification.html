@@ -21,27 +21,27 @@
     </ion-item-divider>
     <ion-item>
         <ion-label stacked>{{ 'NAME' | translate }}</ion-label>
-        <ion-input type="text" [(ngModel)]="verifyObj.firstname" name="firstname"></ion-input>
+        <ion-input type="text" [(ngModel)]="verifyObj.firstname" name="firstname" required disabled></ion-input>
     </ion-item>
 
     <ion-item>
         <ion-label stacked>{{ 'SURNAME' | translate }}</ion-label>
-        <ion-input type="text" [(ngModel)]="verifyObj.surname" name="surname"></ion-input>
+        <ion-input type="text" [(ngModel)]="verifyObj.surname" name="surname" required disabled></ion-input>
     </ion-item>
 
     <ion-item>
         <ion-label stacked>{{ 'EMAIL' | translate }}</ion-label>
-        <ion-input type="email" [(ngModel)]="verifyObj.email" name="email"></ion-input>
+        <ion-input type="email" [(ngModel)]="verifyObj.email" name="email" required disabled></ion-input>
     </ion-item>
 
     <ion-item>
         <ion-label stacked>{{'COUNTRY' | translate}}</ion-label>
-        <ion-input type="text" [(ngModel)]="verifyObj.country" name="country"></ion-input>
+        <ion-input type="text" [(ngModel)]="verifyObj.country" name="country" required disabled></ion-input>
     </ion-item>
 
 		<ion-item>
         <ion-label stacked>{{'PHONE' | translate}}</ion-label>
-        <ion-input type="tel" [(ngModel)]="verifyObj.phone" name="phone"></ion-input>
+        <ion-input type="tel" [(ngModel)]="verifyObj.phone" name="phone" required disabled></ion-input>
     </ion-item>
 
 
@@ -49,10 +49,13 @@
       <ion-title>Tier 2</ion-title>
       Limit per Transaction $2500
     </ion-item-divider>
+    <ion-item *ngIf="verifyObj.status" color="{{verifyStatusColor(verifyObj.status)}}">
+      {{verifyStatusText(verifyObj.status)}}
+    </ion-item>
 
     <ion-item>
         <ion-label stacked>Address</ion-label>
-        <ion-textarea [(ngModel)]="verifyObj.address" name="address"></ion-textarea>
+        <ion-input [(ngModel)]="verifyObj.address" name="address"></ion-input>
     </ion-item>
 
 
@@ -66,7 +69,7 @@
     </ion-item>
 
     <ion-item>
-        <!-- <ion-label stacked>Upload Passport</ion-label> -->
+
         <img (click)="presentActionSheet(1)" style=" height: 100px;" src="{{verifyObj.passport_page}}" [hidden]="lastImage !== null"/>
         <img src="{{pathForImage(lastImage)}}" style="height: 100px" [hidden]="lastImage === null">
     </ion-item>
@@ -75,7 +78,7 @@
       Upload an image of you holding the passport
     </ion-item>
     <ion-item>
-        <!-- <ion-label stacked>Upload an image of you holding the passport</ion-label> -->
+
         <img (click)="presentActionSheet(2)" style=" height: 100px;" src="{{verifyObj.holding_passport}}" [hidden]="lastImage2 !== null" item-center>
         <img src="{{pathForImage(lastImage2)}}" style="height: 100px" [hidden]="lastImage2 === null" item-center>
     </ion-item>
