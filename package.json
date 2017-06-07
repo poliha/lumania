@@ -1,8 +1,8 @@
 {
-  "name": "ionic-hello-world",
+  "name": "lumania",
   "version": "0.0.0",
-  "author": "Ionic Framework",
-  "homepage": "http://ionicframework.com/",
+  "author": "Peter Oliha",
+  "homepage": "https://lumania.tech/",
   "private": true,
   "scripts": {
     "clean": "ionic-app-scripts clean",
